@@ -36,3 +36,9 @@ a {
 ul, ol {
   list-style-type: none;
 }
+
+body::-webkit-scrollbar-thumb {
+  background-color: blue;    /* цвет бегунка */
+  border-radius: 20px;       /* округлось бегунка */
+  border: 3px solid orange;  /* отступ вокруг бегунка */
+}

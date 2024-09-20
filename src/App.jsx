@@ -10,12 +10,13 @@ function App() {
   return (
     <div className="App">
       <AppHeader />
-      <main style={{ display: "flex", justifyContent: "center", gap: "40px" }}>
+      <main style={{ display: "flex", justifyContent: "center", gap: "40px"}}>
         <BurgerIngredients data={data} />
-        <BurgerConstructor />
+        <BurgerConstructor data={data} />
       </main>
     </div>
   );
 }
+
 
 export default App;
