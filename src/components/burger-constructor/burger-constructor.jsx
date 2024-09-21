@@ -1,5 +1,6 @@
 import React from "react";
 import PropTypes from "prop-types";
+import { ingredientPropType } from "../../utils/types";
 import {
   CurrencyIcon,
   Button,
@@ -22,14 +23,12 @@ const BurgerConstructor = ({ data }) => {
           text="Краторная булка N-200i (верх)"
           price={200}
           thumbnail={"https://code.s3.yandex.net/react/code/bun-02.png"}
-          style={{ marginLeft: "32px" }}
         />
         <div className={styles.constructor_items}>
           {buns.map((e) => (
-            <div>
+            <div key={e._id}>
               <DragIcon type="primary" />
               <ConstructorElement
-                key={e._id}
                 isLocked={false}
                 text={e.name}
                 price={e.price}
@@ -38,10 +37,9 @@ const BurgerConstructor = ({ data }) => {
             </div>
           ))}
           {sauces.map((e) => (
-            <div>
+            <div key={e._id}>
               <DragIcon type="primary" />
               <ConstructorElement
-                key={e._id}
                 isLocked={true}
                 text={e.name}
                 price={e.price}
@@ -50,10 +48,9 @@ const BurgerConstructor = ({ data }) => {
             </div>
           ))}
           {mains.map((e) => (
-            <div>
+            <div key={e._id}>
               <DragIcon type="primary" />
               <ConstructorElement
-                key={e._id}
                 isLocked={true}
                 text={e.name}
                 price={e.price}
@@ -84,20 +81,8 @@ const BurgerConstructor = ({ data }) => {
 };
 
 BurgerConstructor.propTypes = {
-  data: PropTypes.shape({
-    _id: PropTypes.string.isRequired,
-    type: PropTypes.string.isRequired,
-    name: PropTypes.string.isRequired,
-    price: PropTypes.number.isRequired,
-    image: PropTypes.string.isRequired,
-    proteins: PropTypes.number,
-    fat: PropTypes.number,
-    carbohydrates: PropTypes.number,
-    calories: PropTypes.number,
-    image_mobile: PropTypes.string,
-    image_large: PropTypes.string,
-    __v: PropTypes.number,
-  }),
+  data: PropTypes.arrayOf(PropTypes.shape(ingredientPropType.isRequired))
+    .isRequired,
 };
 
 export { BurgerConstructor };

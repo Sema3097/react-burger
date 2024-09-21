@@ -1,5 +1,6 @@
 import { React, useState } from "react";
 import PropTypes from "prop-types";
+import { ingredientPropType } from "../../utils/types";
 import { Tab } from "@ya.praktikum/react-developer-burger-ui-components";
 import styles from "./burger-ingredient.module.css";
 import { BurgerIngredientBun } from "./burger-ingredient-bun";
@@ -11,7 +12,7 @@ const BurgerIngredients = ({ data }) => {
 
   return (
     <section className={styles.section_burgers}>
-      <h1 className="text text_type_main-large" style={{ padding: "20 0px" }}>
+      <h1 className={`${styles.title}text text_type_main-large`}>
         Соберите бургер
       </h1>
       <div className={styles.tab}>
@@ -35,20 +36,8 @@ const BurgerIngredients = ({ data }) => {
 };
 
 BurgerIngredients.propTypes = {
-  data: PropTypes.shape({
-    _id: PropTypes.string.isRequired,
-    type: PropTypes.string.isRequired,
-    name: PropTypes.string.isRequired,
-    price: PropTypes.number.isRequired,
-    image: PropTypes.string.isRequired,
-    proteins: PropTypes.number,
-    fat: PropTypes.number,
-    carbohydrates: PropTypes.number,
-    calories: PropTypes.number,
-    image_mobile: PropTypes.string,
-    image_large: PropTypes.string,
-    __v: PropTypes.number,
-  }),
+  data: PropTypes.arrayOf(PropTypes.shape(ingredientPropType.isRequired))
+    .isRequired,
 };
 
 export { BurgerIngredients };

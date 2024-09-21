@@ -1,12 +1,13 @@
 import React from "react";
 import PropTypes from "prop-types";
+import { ingredientPropType } from "../../utils/types";
 import {
   CurrencyIcon,
   Counter,
 } from "@ya.praktikum/react-developer-burger-ui-components";
 import styles from "./item-ingredient.module.css";
 
-const BurgerIngredientBun = ({ data }) => {
+const BurgerIngredientBun = ({ data, IngredientTypes }) => {
   return (
     <div className={styles.main}>
       <h2>Булки</h2>
@@ -43,20 +44,8 @@ const BurgerIngredientBun = ({ data }) => {
 };
 
 BurgerIngredientBun.propTypes = {
-  data: PropTypes.shape({
-    _id: PropTypes.string.isRequired,
-    type: PropTypes.string.isRequired,
-    name: PropTypes.string.isRequired,
-    price: PropTypes.number.isRequired,
-    image: PropTypes.string.isRequired,
-    proteins: PropTypes.number,
-    fat: PropTypes.number,
-    carbohydrates: PropTypes.number,
-    calories: PropTypes.number,
-    image_mobile: PropTypes.string,
-    image_large: PropTypes.string,
-    __v: PropTypes.number,
-  }),
+  data: PropTypes.arrayOf(PropTypes.shape(ingredientPropType.isRequired))
+    .isRequired,
 };
 
 export { BurgerIngredientBun };

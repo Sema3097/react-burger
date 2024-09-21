@@ -22,7 +22,7 @@ const AppHeader = () => {
           <div className={styles.listicon}>
             <ListIcon type="secondary" />
 
-            <a href="/" className="text text_type_main-default"  style={{'color':'#8585AD'}}>
+            <a href="/" className={`${styles.link} text text_type_main-default`}>
               Лента заказов
             </a>
           </div>
@@ -33,7 +33,7 @@ const AppHeader = () => {
 
           <div className={styles.profileicon}>
             <ProfileIcon type="secondary" />
-            <a href="/" className="text text_type_main-default" style={{'color':'#8585AD'}}>
+            <a href="/" className={`${styles.link} text text_type_main-default`}>
               Личный кабинет
             </a>
           </div>

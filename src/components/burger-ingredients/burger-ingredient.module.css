@@ -9,5 +9,9 @@
 
 .burger_menu {
   overflow: auto;
-  height: 600px;
+  height: 70vh;
+}
+
+.title {
+  padding: 20px 0;
 }

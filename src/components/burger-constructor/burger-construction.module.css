@@ -9,6 +9,8 @@
   flex-direction: column;
   align-items: center;
   gap: 10px;
+  height: 65vh;
+
 }
 
 .constructor_items {
@@ -16,7 +18,6 @@
   flex-direction: column;
   gap: 16px;
   overflow: auto;
-  height: 350px;
 }
 
 .footer {
