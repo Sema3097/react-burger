@@ -6,9 +6,24 @@ import styles from "./burger-ingredient.module.css";
 import { BurgerIngredientBun } from "./burger-ingredient-bun";
 import { BurgerIngredientSauce } from "./burger-ingredient-sauce";
 import { BurgerIngredientMain } from "./burger-ingredient-main";
+import { Modal } from "../uikit/modal";
+import { IngredientDetails } from "../uikit/modal-content/ingredient-details";
 
-const BurgerIngredients = ({ data }) => {
+const BurgerIngredients = ({ ingredientsData }) => {
   const [current, setCurrent] = useState("one");
+
+  const [isOpenModal, setIsOpenModal] = useState(false);
+
+  const [ingredientDescription, setIngredientDescription] = useState({});
+
+  const onOpen = (e) => {
+    setIngredientDescription(e);
+    setIsOpenModal(true);
+  };
+
+  const onClose = () => {
+    setIsOpenModal(false);
+  };
 
   return (
     <section className={styles.section_burgers}>
@@ -27,16 +42,30 @@ const BurgerIngredients = ({ data }) => {
         </Tab>
       </div>
       <section className={styles.burger_menu}>
-        <BurgerIngredientBun data={data} />
-        <BurgerIngredientSauce data={data} />
-        <BurgerIngredientMain data={data} />
+        <BurgerIngredientBun
+          ingredientsData={ingredientsData}
+          onOpen={onOpen}
+        />
+        <BurgerIngredientSauce
+          ingredientsData={ingredientsData}
+          onOpen={onOpen}
+        />
+        <BurgerIngredientMain
+          ingredientsData={ingredientsData}
+          onOpen={onOpen}
+        />
       </section>
+      {isOpenModal && (
+        <Modal title='Детали ингредиента' onClose={onClose}>
+          <IngredientDetails ingredientDescription={ingredientDescription} />
+        </Modal>
+      )}
     </section>
   );
 };
 
 BurgerIngredients.propTypes = {
-  data: PropTypes.arrayOf(PropTypes.shape(ingredientPropType.isRequired))
+  ingredientsData: PropTypes.arrayOf(PropTypes.shape(ingredientPropType.isRequired))
     .isRequired,
 };
 

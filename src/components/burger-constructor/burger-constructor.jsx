@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import PropTypes from "prop-types";
 import { ingredientPropType } from "../../utils/types";
 import {
@@ -8,11 +8,23 @@ import {
   DragIcon,
 } from "@ya.praktikum/react-developer-burger-ui-components";
 import styles from "./burger-construction.module.css";
+import { Modal } from "../uikit/modal";
+import { OrderDetails } from "../uikit/modal-content/order-details";
 
-const BurgerConstructor = ({ data }) => {
-  const buns = data.filter((bun) => bun.type === "bun");
-  const sauces = data.filter((sauce) => sauce.type === "sauce");
-  const mains = data.filter((main) => main.type === "main");
+const BurgerConstructor = ({ ingredientsData }) => {
+  const [isOpenModal, setIsOpenModal] = useState(false);
+
+  const buns = ingredientsData.filter((bun) => bun.type === "bun");
+  const sauces = ingredientsData.filter((sauce) => sauce.type === "sauce");
+  const mains = ingredientsData.filter((main) => main.type === "main");
+
+  const isOpen = () => {
+    setIsOpenModal(true);
+  };
+
+  const onClose = () => {
+    setIsOpenModal(false);
+  };
 
   return (
     <section className={styles.container}>
@@ -72,16 +84,19 @@ const BurgerConstructor = ({ data }) => {
           <p className="text text_type_digits-medium">610</p>
           <CurrencyIcon type="primary" />
         </div>
-        <Button htmlType="button" type="primary" size="large">
+        <Button onClick={isOpen} htmlType="button" type="primary" size="large">
           Оформить заказ
         </Button>
       </div>
+      {isOpenModal && <Modal onClose={onClose}>
+        <OrderDetails />
+        </Modal>}
     </section>
   );
 };
 
 BurgerConstructor.propTypes = {
-  data: PropTypes.arrayOf(PropTypes.shape(ingredientPropType.isRequired))
+  ingredientsData: PropTypes.arrayOf(PropTypes.shape(ingredientPropType.isRequired))
     .isRequired,
 };
 

@@ -7,15 +7,15 @@ import {
 } from "@ya.praktikum/react-developer-burger-ui-components";
 import styles from "./item-ingredient.module.css";
 
-const BurgerIngredientBun = ({ data, IngredientTypes }) => {
+const BurgerIngredientBun = ({ ingredientsData, onOpen }) => {
   return (
     <div className={styles.main}>
       <h2>Булки</h2>
       <div className={styles.main_inner}>
-        {data.map((e) => (
+        {ingredientsData.map((e) => (
           <div key={e._id} className={styles.main_item}>
             {e.type === "bun" && (
-              <div className={styles.main_item_card}>
+              <div className={styles.main_item_card} onClick={() => onOpen(e)}>
                 <Counter
                   count={1}
                   size="default"
@@ -44,8 +44,10 @@ const BurgerIngredientBun = ({ data, IngredientTypes }) => {
 };
 
 BurgerIngredientBun.propTypes = {
-  data: PropTypes.arrayOf(PropTypes.shape(ingredientPropType.isRequired))
-    .isRequired,
+  ingredientsData: PropTypes.arrayOf(
+    PropTypes.shape(ingredientPropType.isRequired)
+  ).isRequired,
+  onOpen: PropTypes.func.isRequired,
 };
 
 export { BurgerIngredientBun };
