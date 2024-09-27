@@ -1,10 +1,9 @@
 import React, { useEffect, useState } from "react";
-import "./App.css";
-import { ApiIngredients } from "./utils/data";
-import { AppHeader } from "./components/app-header/app-header";
-import { BurgerIngredients } from "./components/burger-ingredients/burger-ingredients";
-import { BurgerConstructor } from "./components/burger-constructor/burger-constructor";
-import { Modal } from "./components/uikit/modal";
+import { ApiIngredients } from "../../utils/data";
+import { AppHeader } from "../app-header/app-header";
+import { BurgerIngredients } from "../burger-ingredients/burger-ingredients";
+import { BurgerConstructor } from "../burger-constructor/burger-constructor";
+import styles from './app.module.css'
 
 function App() {
   const [ingredientsData, setIngredientsData] = useState([]);
@@ -21,9 +20,9 @@ function App() {
   }, []);
 
   return (
-    <div className="App">
+    <div className={styles.App}>
       <AppHeader />
-      <main className="App-container">
+      <main className={styles.App_container}>
         <BurgerIngredients ingredientsData={ingredientsData} />
         <BurgerConstructor ingredientsData={ingredientsData} />
       </main>

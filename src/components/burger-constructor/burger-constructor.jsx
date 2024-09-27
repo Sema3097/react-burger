@@ -14,7 +14,6 @@ import { OrderDetails } from "../uikit/modal-content/order-details";
 const BurgerConstructor = ({ ingredientsData }) => {
   const [isOpenModal, setIsOpenModal] = useState(false);
 
-  const buns = ingredientsData.filter((bun) => bun.type === "bun");
   const sauces = ingredientsData.filter((sauce) => sauce.type === "sauce");
   const mains = ingredientsData.filter((main) => main.type === "main");
 
@@ -37,17 +36,6 @@ const BurgerConstructor = ({ ingredientsData }) => {
           thumbnail={"https://code.s3.yandex.net/react/code/bun-02.png"}
         />
         <div className={styles.constructor_items}>
-          {buns.map((e) => (
-            <div key={e._id}>
-              <DragIcon type="primary" />
-              <ConstructorElement
-                isLocked={false}
-                text={e.name}
-                price={e.price}
-                thumbnail={e.image}
-              />
-            </div>
-          ))}
           {sauces.map((e) => (
             <div key={e._id}>
               <DragIcon type="primary" />
@@ -88,16 +76,19 @@ const BurgerConstructor = ({ ingredientsData }) => {
           Оформить заказ
         </Button>
       </div>
-      {isOpenModal && <Modal onClose={onClose}>
-        <OrderDetails />
-        </Modal>}
+      {isOpenModal && (
+        <Modal onClose={onClose}>
+          <OrderDetails />
+        </Modal>
+      )}
     </section>
   );
 };
 
 BurgerConstructor.propTypes = {
-  ingredientsData: PropTypes.arrayOf(PropTypes.shape(ingredientPropType.isRequired))
-    .isRequired,
+  ingredientsData: PropTypes.arrayOf(
+    PropTypes.shape(ingredientPropType.isRequired)
+  ).isRequired,
 };
 
 export { BurgerConstructor };
