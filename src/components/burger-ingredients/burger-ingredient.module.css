@@ -1,0 +1,17 @@
+.section_burgers {
+  max-width: 600px;
+  padding: 40px 0;
+}
+
+.tab {
+  display: flex;
+}
+
+.burger_menu {
+  overflow: auto;
+  height: 70vh;
+}
+
+.title {
+  padding: 20px 0;
+}

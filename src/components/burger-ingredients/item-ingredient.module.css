@@ -1,0 +1,28 @@
+.main_inner {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: 32px 0;
+}
+
+.main_item_card {
+    width: 272px;
+    text-align: center;
+    position: relative;
+    cursor: pointer;
+}
+
+.main_info {
+    margin: 8px 0;
+}
+
+.name {
+    padding-bottom: 24px;
+}
+
+.main_info {
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+}
+

@@ -1,0 +1,47 @@
+.IngredientDetails_container,
+.OrderDetails_container {
+  text-align: center;
+  padding: 0 100px;
+}
+
+.IngredientDetails_img {
+  width: 480px;
+  margin-bottom: 16px;
+}
+
+.IngredientDetails_title {
+  margin-bottom: 32px;
+}
+
+.IngredientDetails_inner {
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+}
+
+.IngredientDetails_description {
+  min-width: 125px;
+}
+
+.description_title,
+.description_info {
+  margin: 0;
+}
+
+.OrderDetails_number {
+  text-shadow: #3333ff 1px 0 20px;
+  margin-bottom: 32px;
+}
+
+.OrderDetails_title {
+  margin-bottom: 60px;
+}
+
+.OrderDetails_image {
+  padding: 30px;
+  margin-bottom: 30px;
+}
+
+.OrderDetails_footer {
+  margin-bottom: 20px;
+}
