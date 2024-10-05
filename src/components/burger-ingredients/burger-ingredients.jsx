@@ -1,6 +1,4 @@
-import { React, useState } from "react";
-import PropTypes from "prop-types";
-import { ingredientPropType } from "../../utils/types";
+import { React, useState, useRef, useEffect } from "react";
 import { Tab } from "@ya.praktikum/react-developer-burger-ui-components";
 import styles from "./burger-ingredient.module.css";
 import { BurgerIngredientBun } from "./burger-ingredient-bun";
@@ -8,22 +6,37 @@ import { BurgerIngredientSauce } from "./burger-ingredient-sauce";
 import { BurgerIngredientMain } from "./burger-ingredient-main";
 import { Modal } from "../uikit/modal";
 import { IngredientDetails } from "../uikit/modal-content/ingredient-details";
+import { useSelector } from "react-redux";
 
-const BurgerIngredients = ({ ingredientsData }) => {
+const BurgerIngredients = () => {
   const [current, setCurrent] = useState("one");
 
-  const [isOpenModal, setIsOpenModal] = useState(false);
+  const burgerMenuRef = useRef(null);
 
-  const [ingredientDescription, setIngredientDescription] = useState({});
+  const menuItems = ["one", "two", "three"];
 
-  const onOpen = (e) => {
-    setIngredientDescription(e);
-    setIsOpenModal(true);
+  const handleScroll = () => {
+    const sections = burgerMenuRef.current.children;
+
+    for (let i = 0; i < sections.length; i++) {
+      const sectionRect = sections[i].getBoundingClientRect();
+      if (sectionRect.top >= 0 && sectionRect.top < window.innerHeight) {
+        setCurrent(menuItems[i]);
+        break;
+      }
+    }
   };
 
-  const onClose = () => {
-    setIsOpenModal(false);
-  };
+  useEffect(() => {
+    const burgerMenuElement = burgerMenuRef.current;
+    burgerMenuElement.addEventListener("scroll", handleScroll);
+
+    return () => {
+      burgerMenuElement.removeEventListener("scroll", handleScroll);
+    };
+  }, []);
+
+  const isOpenModalWindow = useSelector(state => state.addData.isOpenModal);
 
   return (
     <section className={styles.section_burgers}>
@@ -41,32 +54,18 @@ const BurgerIngredients = ({ ingredientsData }) => {
           Начинки
         </Tab>
       </div>
-      <section className={styles.burger_menu}>
-        <BurgerIngredientBun
-          ingredientsData={ingredientsData}
-          onOpen={onOpen}
-        />
-        <BurgerIngredientSauce
-          ingredientsData={ingredientsData}
-          onOpen={onOpen}
-        />
-        <BurgerIngredientMain
-          ingredientsData={ingredientsData}
-          onOpen={onOpen}
-        />
+      <section className={styles.burger_menu} ref={burgerMenuRef}>
+        <BurgerIngredientBun />
+        <BurgerIngredientSauce />
+        <BurgerIngredientMain />
       </section>
-      {isOpenModal && (
-        <Modal title='Детали ингредиента' onClose={onClose}>
-          <IngredientDetails ingredientDescription={ingredientDescription} />
+      {isOpenModalWindow && (
+        <Modal title="Детали ингредиента" >
+          <IngredientDetails />
         </Modal>
       )}
     </section>
   );
-};
-
-BurgerIngredients.propTypes = {
-  ingredientsData: PropTypes.arrayOf(PropTypes.shape(ingredientPropType.isRequired))
-    .isRequired,
 };
 
 export { BurgerIngredients };

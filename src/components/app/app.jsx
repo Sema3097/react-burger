@@ -1,30 +1,21 @@
-import React, { useEffect, useState } from "react";
-import { ApiIngredients } from "../../utils/data";
+import React from "react";
 import { AppHeader } from "../app-header/app-header";
 import { BurgerIngredients } from "../burger-ingredients/burger-ingredients";
 import { BurgerConstructor } from "../burger-constructor/burger-constructor";
-import styles from './app.module.css'
+import styles from "./app.module.css";
+import { DndProvider } from "react-dnd";
+import { HTML5Backend } from "react-dnd-html5-backend";
 
 function App() {
-  const [ingredientsData, setIngredientsData] = useState([]);
-
-  useEffect(() => {
-    fetch(ApiIngredients)
-      .then((response) => {
-        return response.json();
-      })
-      .then((data) => {
-        setIngredientsData(data.data);
-      })
-      .catch((err) => console.error(err));
-  }, []);
 
   return (
     <div className={styles.App}>
       <AppHeader />
       <main className={styles.App_container}>
-        <BurgerIngredients ingredientsData={ingredientsData} />
-        <BurgerConstructor ingredientsData={ingredientsData} />
+        <DndProvider backend={HTML5Backend}>
+          <BurgerIngredients />
+          <BurgerConstructor />
+        </DndProvider>
       </main>
     </div>
   );

@@ -1,22 +1,31 @@
-import React, { useEffect } from "react";
+import React, { useCallback, useEffect } from "react";
 import PropTypes from "prop-types";
 import styles from "./uikit.module.css";
 import { CloseIcon } from "@ya.praktikum/react-developer-burger-ui-components";
 import { createPortal } from "react-dom";
 import { ModalOverlay } from "./modal-overlay";
+import { useDispatch } from "react-redux";
+import { closeModal } from "../../services/add-data-to-modal";
+import { deleteData } from "../../services/add-data-to-modal";
 
 const modalElement = document.getElementById("modal");
 
-const Modal = ({ children, onClose, title }) => {
+const Modal = ({ children, title }) => {
   useEffect(() => {
     function onEsc(e) {
       if (e.code === "Escape") {
-        onClose();
+        closeModalWindow();
       }
     }
     document.addEventListener("keydown", onEsc);
     return () => document.removeEventListener("keydown", onEsc);
-  }, [onClose]);
+  }, []);
+
+  const dispatch = useDispatch();
+  const closeModalWindow = () => {
+    dispatch(closeModal(false));
+    dispatch(deleteData());
+  };
 
   return createPortal(
     <>
@@ -24,23 +33,23 @@ const Modal = ({ children, onClose, title }) => {
         <header className={styles.header}>
           <article className="text text_type_main-medium">{title}</article>
           <CloseIcon
-            onClick={() => onClose()}
+            onClick={() => closeModalWindow()}
             type="primary"
             className={styles.cross}
           />
         </header>
         <main>{children}</main>
       </div>
-      <ModalOverlay onClose={onClose} />
+      <ModalOverlay />
     </>,
     modalElement
   );
 };
 
-Modal.propTypes = {
-  onClose: PropTypes.func.isRequired,
-  title: PropTypes.string,
-  children: PropTypes.element.isRequired,
-};
+// Modal.propTypes = {
+//   onClose: PropTypes.func.isRequired,
+//   title: PropTypes.string,
+//   children: PropTypes.element.isRequired,
+// };
 
 export { Modal };
