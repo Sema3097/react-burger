@@ -4,6 +4,8 @@ import {
   CurrencyIcon,
   Counter,
 } from "@ya.praktikum/react-developer-burger-ui-components";
+import PropTypes from "prop-types";
+import { ingredientPropType } from "../../utils/types";
 import { useDispatch, useSelector } from "react-redux";
 import { openModal } from "../../services/add-data-to-modal";
 import { addData } from "../../services/add-data-to-modal";
@@ -55,6 +57,10 @@ const BurgerItem = ({ data }) => {
       </article>
     </div>
   );
+};
+
+BurgerItem.propTypes = {
+  data: PropTypes.shape(ingredientPropType.isRequired).isRequired,
 };
 
 export { BurgerItem };

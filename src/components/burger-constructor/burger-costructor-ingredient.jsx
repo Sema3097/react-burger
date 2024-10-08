@@ -5,6 +5,8 @@ import {
   DragIcon,
 } from "@ya.praktikum/react-developer-burger-ui-components";
 import styles from "./burger-construction.module.css";
+import PropTypes from "prop-types";
+import { ingredientPropType } from "../../utils/types";
 import { useDispatch } from "react-redux";
 import {
   deleteFilling,
@@ -75,6 +77,12 @@ const BurgerCostructorIngredient = ({ id, ingredient, index }) => {
       />
     </div>
   );
+};
+
+BurgerCostructorIngredient.propTypes = {
+  ingredient: PropTypes.shape(ingredientPropType.isRequired).isRequired,
+  id: PropTypes.string.isRequired,
+  index: PropTypes.number.isRequired,
 };
 
 export { BurgerCostructorIngredient };

@@ -19,7 +19,7 @@ import { BurgerCostructorIngredient } from "./burger-costructor-ingredient";
 import { useSendDataMutation } from "../../services/getting-order";
 
 const BurgerConstructor = () => {
-  const [sendData, { isSuccess, isError, data: responseData }] =
+  const [sendData, { isLoading, isError, data: responseData }] =
     useSendDataMutation();
 
   const dispatch = useDispatch();
@@ -140,7 +140,10 @@ const BurgerConstructor = () => {
           Оформить заказ
         </Button>
       </div>
-      {responseData &&
+      {isLoading ? (
+        <h1>Подождите...</h1>
+      ) : (
+        responseData &&
         isOpenModalWindow &&
         (isError ? (
           <h1>Произошла ошибка, попробуйте повторить позже</h1>
@@ -148,15 +151,10 @@ const BurgerConstructor = () => {
           <Modal>
             <OrderDetails responseData={responseData} />
           </Modal>
-        ))}
+        ))
+      )}
     </section>
   );
 };
-
-// BurgerConstructor.propTypes = {
-//   ingredientsData: PropTypes.arrayOf(
-//     PropTypes.shape(ingredientPropType.isRequired)
-//   ).isRequired,
-// };
 
 export { BurgerConstructor };

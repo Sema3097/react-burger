@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect } from "react";
+import React, { useEffect } from "react";
 import PropTypes from "prop-types";
 import styles from "./uikit.module.css";
 import { CloseIcon } from "@ya.praktikum/react-developer-burger-ui-components";
@@ -48,10 +48,9 @@ const Modal = ({ children, title }) => {
   );
 };
 
-// Modal.propTypes = {
-//   onClose: PropTypes.func.isRequired,
-//   title: PropTypes.string,
-//   children: PropTypes.element.isRequired,
-// };
+Modal.propTypes = {
+  title: PropTypes.string,
+  children: PropTypes.element.isRequired,
+};
 
 export { Modal };

@@ -1,5 +1,4 @@
 import React from "react";
-import PropTypes from "prop-types";
 import styles from "./uikit.module.css";
 import { useDispatch } from "react-redux";
 import { closeModal } from "../../services/add-data-to-modal";
@@ -16,9 +15,5 @@ const ModalOverlay = () => {
 
   return <div className={styles.modal_overlay} onClick={() => closeModalWindow()} />;
 };
-
-// ModalOverlay.propTypes = {
-//   onClose: PropTypes.func.isRequired,
-// };
 
 export { ModalOverlay };

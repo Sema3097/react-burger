@@ -1,6 +1,4 @@
 import React from "react";
-import PropTypes from "prop-types";
-import { ingredientPropType } from "../../../utils/types";
 import styles from "./modal-content.module.css";
 import { useSelector } from "react-redux";
 
@@ -62,10 +60,5 @@ const IngredientDetails = () => {
     </>
   );
 };
-
-// IngredientDetails.propTypes = {
-//   ingredientDescription: PropTypes.shape(ingredientPropType.isRequired)
-//     .isRequired,
-// };
 
 export { IngredientDetails };

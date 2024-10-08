@@ -1,9 +1,11 @@
 import React from "react";
 import styles from "./modal-content.module.css";
 import Done from "../../../images/done.svg";
-const OrderDetails = ({responseData}) => {
-  if(!responseData || !responseData.order || !responseData.order.number) {
-    return <h1>Нет данных</h1>
+import PropTypes from "prop-types";
+
+const OrderDetails = ({ responseData }) => {
+  if (!responseData || !responseData.order || !responseData.order.number) {
+    return <h1>Нет данных</h1>;
   }
   return (
     <div className={styles.OrderDetails_container}>
@@ -24,6 +26,16 @@ const OrderDetails = ({responseData}) => {
       </p>
     </div>
   );
+};
+
+OrderDetails.propTypes = {
+  responseData: PropTypes.shape({
+    success: PropTypes.bool.isRequired,
+    name: PropTypes.string.isRequired,
+    order: PropTypes.shape({
+      number: PropTypes.number.isRequired,
+    }).isRequired,
+  }),
 };
 
 export { OrderDetails };
