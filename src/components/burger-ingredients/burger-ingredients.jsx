@@ -1,14 +1,27 @@
 import { React, useState, useRef, useEffect } from "react";
 import { Tab } from "@ya.praktikum/react-developer-burger-ui-components";
 import styles from "./burger-ingredient.module.css";
-import { BurgerIngredientBun } from "./burger-ingredient-bun";
-import { BurgerIngredientSauce } from "./burger-ingredient-sauce";
-import { BurgerIngredientMain } from "./burger-ingredient-main";
 import { Modal } from "../uikit/modal";
 import { IngredientDetails } from "../uikit/modal-content/ingredient-details";
 import { useSelector } from "react-redux";
+import { useGetFetchQuery } from "../../services/fetch-ingredients";
+import { BurgerItem } from "./burger-item";
 
 const BurgerIngredients = () => {
+  const {
+    ingredients = [],
+    error,
+    isSucces,
+  } = useGetFetchQuery(undefined, {
+    selectFromResult: ({ data }) => ({
+      ingredients: data?.ingredients,
+    }),
+  });
+
+  const buns = ingredients.filter((sauce) => sauce.type === "bun");
+  const sauces = ingredients.filter((sauce) => sauce.type === "sauce");
+  const mains = ingredients.filter((sauce) => sauce.type === "main");
+
   const [current, setCurrent] = useState("one");
 
   const burgerMenuRef = useRef(null);
@@ -36,7 +49,10 @@ const BurgerIngredients = () => {
     };
   }, []);
 
-  const isOpenModalWindow = useSelector(state => state.addData.isOpenModal);
+  const isOpenModalWindow = useSelector((state) => state.addData.isOpenModal);
+
+  if (error) return <h1>{error}</h1>;
+  if (isSucces) return ingredients;
 
   return (
     <section className={styles.section_burgers}>
@@ -55,12 +71,47 @@ const BurgerIngredients = () => {
         </Tab>
       </div>
       <section className={styles.burger_menu} ref={burgerMenuRef}>
-        <BurgerIngredientBun />
-        <BurgerIngredientSauce />
-        <BurgerIngredientMain />
+        <div>
+          <h1 className={`${styles.title}text text_type_main-medium`}>Булки</h1>
+          <div className={styles.burger_menu_inner}>
+            {buns.map((item) => (
+              <div key={item._id} className={styles.main_inner}>
+                <div className={styles.main_inner}>
+                  <BurgerItem data={item} />
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+        <div>
+          <h1 className={`${styles.title}text text_type_main-medium`}>Соусы</h1>
+          <div className={styles.burger_menu_inner}>
+            {sauces.map((item) => (
+              <div key={item._id} className={styles.main_inner}>
+                <div className={styles.main_inner}>
+                  <BurgerItem data={item} />
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+        <div>
+          <h1 className={`${styles.title}text text_type_main-medium`}>
+            Начинки
+          </h1>
+          <div className={styles.burger_menu_inner}>
+            {mains.map((item, index) => (
+              <div key={item._id} className={styles.main_inner}>
+                <div className={styles.main_inner}>
+                  <BurgerItem data={item} />
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
       </section>
       {isOpenModalWindow && (
-        <Modal title="Детали ингредиента" >
+        <Modal title="Детали ингредиента">
           <IngredientDetails />
         </Modal>
       )}

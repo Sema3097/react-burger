@@ -1,14 +1,16 @@
 import React from "react";
 import styles from "./modal-content.module.css";
 import Done from "../../../images/done.svg";
-
-const OrderDetails = () => {
+const OrderDetails = ({responseData}) => {
+  if(!responseData || !responseData.order || !responseData.order.number) {
+    return <h1>Нет данных</h1>
+  }
   return (
     <div className={styles.OrderDetails_container}>
       <h1
         className={`${styles.OrderDetails_number} text text_type_digits-large`}
       >
-        034536
+        {responseData.order.number}
       </h1>
       <h3 className={`${styles.OrderDetails_title}text text_type_main-medium`}>
         идентификатор заказа

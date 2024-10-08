@@ -10,8 +10,8 @@ const addDataSlice = createSlice({
     addData(state, action) {
       state.ingredientDescription = action.payload;
     },
-    deleteData(state, action) {
-      state.ingredientDescription = null;
+    deleteData(state) {
+      state.ingredientDescription = {};
     },
     openModal(state) {
       state.isOpenModal = true;

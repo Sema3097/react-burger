@@ -1,30 +1,50 @@
-import { createSlice } from "@reduxjs/toolkit";
+import { createSlice, nanoid } from "@reduxjs/toolkit";
 
 const constructorSlice = createSlice({
   name: "addIngredientsToConstructor",
   initialState: {
     burgerFilling: [],
+    burgerBuns: [],
   },
   reducers: {
     addFilling(state, action) {
-      state.burgerFilling.push({
-        calories: action.payload.calories,
-        carbohydrates: action.payload.carbohydrates,
-        fat: action.payload.fat,
-        image: action.payload.image,
-        image_large: action.payload.image_large,
-        image_mobile: action.payload.image_mobile,
-        name: action.payload.name,
-        price: action.payload.price,
-        proteins: action.payload.proteins,
-        type: action.payload.type,
-        __v: action.payload.__v,
-        _id: action.payload._id,
-      });
+      const newItem = { ...action.payload, uniqueid: nanoid() };
+      if (newItem.type !== "bun") {
+        state.burgerFilling.push(newItem);
+      }
     },
-    deleteFilling(state, action) {},
+    deleteFilling(state, action) {
+      state.burgerFilling = state.burgerFilling.filter(
+        (item) => item.uniqueid !== action.payload
+      );
+    },
+    addBuns(state, action) {
+      const newBun = { ...action.payload, uniqueid: nanoid() };
+      if (newBun.type === "bun") {
+        state.burgerBuns = [newBun];
+      }
+    },
+    deleteBuns(state, action) {
+      state.burgerBuns = state.burgerBuns.filter(
+        (item) => item.uniqueid !== action.payload
+      );
+    },
+    transferIngredients(state, action) {
+      const { dragIndex, hoverIndex } = action.payload;
+      const dragIngredient = state.burgerFilling[dragIndex];
+      const updateFilling = [...state.burgerFilling];
+      updateFilling.splice(dragIndex, 1);
+      updateFilling.splice(hoverIndex, 0, dragIngredient);
+      state.burgerFilling = updateFilling;
+    },
   },
 });
 
-export const { addFilling, deleteFilling } = constructorSlice.actions;
+export const {
+  addFilling,
+  addBuns,
+  deleteFilling,
+  deleteBuns,
+  transferIngredients,
+} = constructorSlice.actions;
 export default constructorSlice.reducer;

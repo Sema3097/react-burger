@@ -6,6 +6,7 @@ import { createPortal } from "react-dom";
 import { ModalOverlay } from "./modal-overlay";
 import { useDispatch } from "react-redux";
 import { closeModal } from "../../services/add-data-to-modal";
+import { closesModal } from "../../services/getting-and-updating-modal";
 import { deleteData } from "../../services/add-data-to-modal";
 
 const modalElement = document.getElementById("modal");
@@ -25,6 +26,7 @@ const Modal = ({ children, title }) => {
   const closeModalWindow = () => {
     dispatch(closeModal(false));
     dispatch(deleteData());
+    dispatch(closesModal(false));
   };
 
   return createPortal(
