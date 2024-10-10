@@ -13,10 +13,12 @@ import {
   addFilling,
   addBuns,
   deleteBuns,
+  clearConstructor
 } from "../../services/constructor-ingredients-save";
 import { openModal } from "../../services/getting-and-updating-modal";
 import { BurgerCostructorIngredient } from "./burger-costructor-ingredient";
 import { useSendDataMutation } from "../../services/getting-order";
+import { closesModal } from "../../services/getting-and-updating-modal";
 
 const BurgerConstructor = () => {
   const [sendData, { isLoading, isError, data: responseData }] =
@@ -30,6 +32,10 @@ const BurgerConstructor = () => {
     (state) => state.updatingModal.isOpenModal
   );
 
+  const closeOrderDetails = () => {
+    dispatch(closesModal(false));
+  };
+
   const allIngredients = [
     ...burgerBuns.map((item) => item._id),
     ...burgerFilling.map((item) => item._id),
@@ -39,11 +45,14 @@ const BurgerConstructor = () => {
   const openModalWindow = async () => {
     try {
       const dataToSend = { ingredients: allIngredients };
-      await sendData(dataToSend);
+      await sendData(dataToSend)
+        .then(() => {
+          dispatch(openModal(true));
+          dispatch(clearConstructor());
+        });
     } catch (error) {
       console.error(error);
     }
-    dispatch(openModal(true));
   };
 
   const deleteBurgerBuns = (uniqueid) => {
@@ -148,7 +157,7 @@ const BurgerConstructor = () => {
         (isError ? (
           <h1>Произошла ошибка, попробуйте повторить позже</h1>
         ) : (
-          <Modal>
+          <Modal closeOrderDetails={closeOrderDetails}>
             <OrderDetails responseData={responseData} />
           </Modal>
         ))

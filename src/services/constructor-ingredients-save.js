@@ -7,22 +7,42 @@ const constructorSlice = createSlice({
     burgerBuns: [],
   },
   reducers: {
-    addFilling(state, action) {
-      const newItem = { ...action.payload, uniqueid: nanoid() };
-      if (newItem.type !== "bun") {
-        state.burgerFilling.push(newItem);
-      }
+    addFilling: {
+      prepare: (item) => {
+        return {
+          payload: {
+            ...item,
+            uniqueid: nanoid(),
+          },
+        };
+      },
+      reducer: (state, action) => {
+        const newItem = action.payload;
+        if (newItem.type !== "bun") {
+          state.burgerFilling.push(newItem);
+        }
+      },
     },
     deleteFilling(state, action) {
       state.burgerFilling = state.burgerFilling.filter(
         (item) => item.uniqueid !== action.payload
       );
     },
-    addBuns(state, action) {
-      const newBun = { ...action.payload, uniqueid: nanoid() };
-      if (newBun.type === "bun") {
-        state.burgerBuns = [newBun];
-      }
+    addBuns: {
+      prepare: (item) => {
+        return {
+          payload: {
+            ...item,
+            uniqueid: nanoid(),
+          },
+        };
+      },
+      reducer: (state, action) => {
+        const newBun = action.payload;
+        if (newBun.type === "bun") {
+          state.burgerBuns = [newBun];
+        }
+      },
     },
     deleteBuns(state, action) {
       state.burgerBuns = state.burgerBuns.filter(
@@ -37,6 +57,10 @@ const constructorSlice = createSlice({
       updateFilling.splice(hoverIndex, 0, dragIngredient);
       state.burgerFilling = updateFilling;
     },
+    clearConstructor(state) {
+      state.burgerFilling = [];
+      state.burgerBuns = [];
+    },
   },
 });
 
@@ -46,5 +70,6 @@ export const {
   deleteFilling,
   deleteBuns,
   transferIngredients,
+  clearConstructor
 } = constructorSlice.actions;
 export default constructorSlice.reducer;

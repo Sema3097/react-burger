@@ -3,9 +3,10 @@ import { Tab } from "@ya.praktikum/react-developer-burger-ui-components";
 import styles from "./burger-ingredient.module.css";
 import { Modal } from "../uikit/modal";
 import { IngredientDetails } from "../uikit/modal-content/ingredient-details";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { useGetFetchQuery } from "../../services/fetch-ingredients";
 import { BurgerItem } from "./burger-item";
+import { closeModal, deleteData } from "../../services/add-data-to-modal";
 
 const BurgerIngredients = () => {
   const {
@@ -17,6 +18,12 @@ const BurgerIngredients = () => {
       ingredients: data?.ingredients,
     }),
   });
+
+  const dispatch = useDispatch();
+  const closeIngredientDetails = () => {
+    dispatch(closeModal(false));
+    dispatch(deleteData())
+  };
 
   const buns = ingredients.filter((sauce) => sauce.type === "bun");
   const sauces = ingredients.filter((sauce) => sauce.type === "sauce");
@@ -100,7 +107,7 @@ const BurgerIngredients = () => {
             Начинки
           </h1>
           <div className={styles.burger_menu_inner}>
-            {mains.map((item, index) => (
+            {mains.map((item) => (
               <div key={item._id} className={styles.main_inner}>
                 <div className={styles.main_inner}>
                   <BurgerItem data={item} />
@@ -111,7 +118,7 @@ const BurgerIngredients = () => {
         </div>
       </section>
       {isOpenModalWindow && (
-        <Modal title="Детали ингредиента">
+        <Modal title="Детали ингредиента" closeIngredientDetails={closeIngredientDetails}>
           <IngredientDetails />
         </Modal>
       )}
