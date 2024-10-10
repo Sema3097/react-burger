@@ -18,6 +18,20 @@
   flex-direction: column;
   gap: 16px;
   overflow: auto;
+  min-height: 450px;
+  min-width: 550px;
+  text-align: center;
+}
+
+.constructor_items_filling{
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  max-width: 550px;
+}
+
+.burgerFilling_title {
+  margin-top: 200px;
 }
 
 .footer {
