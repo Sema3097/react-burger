@@ -1,29 +1,11 @@
 import { React, useState, useRef, useEffect } from "react";
 import { Tab } from "@ya.praktikum/react-developer-burger-ui-components";
 import styles from "./burger-ingredient.module.css";
-import { Modal } from "../uikit/modal";
-import { IngredientDetails } from "../uikit/modal-content/ingredient-details";
-import { useDispatch, useSelector } from "react-redux";
-import { useGetFetchQuery } from "../../services/fetch-ingredients";
 import { BurgerItem } from "./burger-item";
-import { closeModal, deleteData } from "../../services/add-data-to-modal";
+import { Link, useLocation } from "react-router-dom";
 
-const BurgerIngredients = () => {
-  const {
-    ingredients = [],
-    error,
-    isSucces,
-  } = useGetFetchQuery(undefined, {
-    selectFromResult: ({ data }) => ({
-      ingredients: data?.ingredients,
-    }),
-  });
-
-  const dispatch = useDispatch();
-  const closeIngredientDetails = () => {
-    dispatch(closeModal(false));
-    dispatch(deleteData())
-  };
+const BurgerIngredients = ({ ingredients }) => {
+  const location = useLocation();
 
   const buns = ingredients.filter((sauce) => sauce.type === "bun");
   const sauces = ingredients.filter((sauce) => sauce.type === "sauce");
@@ -56,11 +38,6 @@ const BurgerIngredients = () => {
     };
   }, []);
 
-  const isOpenModalWindow = useSelector((state) => state.addData.isOpenModal);
-
-  if (error) return <h1>{error}</h1>;
-  if (isSucces) return ingredients;
-
   return (
     <section className={styles.section_burgers}>
       <h1 className={`${styles.title}text text_type_main-large`}>
@@ -82,11 +59,17 @@ const BurgerIngredients = () => {
           <h1 className={`${styles.title}text text_type_main-medium`}>Булки</h1>
           <div className={styles.burger_menu_inner}>
             {buns.map((item) => (
-              <div key={item._id} className={styles.main_inner}>
-                <div className={styles.main_inner}>
-                  <BurgerItem data={item} />
+              <Link
+                key={item._id}
+                to={`/ingredients/${item._id}`}
+                state={{ backgroundLocation: location }}
+              >
+                <div key={item._id} className={styles.main_inner}>
+                  <div className={styles.main_inner}>
+                    <BurgerItem data={item} />
+                  </div>
                 </div>
-              </div>
+              </Link>
             ))}
           </div>
         </div>
@@ -94,11 +77,17 @@ const BurgerIngredients = () => {
           <h1 className={`${styles.title}text text_type_main-medium`}>Соусы</h1>
           <div className={styles.burger_menu_inner}>
             {sauces.map((item) => (
-              <div key={item._id} className={styles.main_inner}>
-                <div className={styles.main_inner}>
-                  <BurgerItem data={item} />
+              <Link
+                key={item._id}
+                to={`/ingredients/${item._id}`}
+                state={{ backgroundLocation: location }}
+              >
+                <div key={item._id} className={styles.main_inner}>
+                  <div className={styles.main_inner}>
+                    <BurgerItem data={item} />
+                  </div>
                 </div>
-              </div>
+              </Link>
             ))}
           </div>
         </div>
@@ -108,20 +97,21 @@ const BurgerIngredients = () => {
           </h1>
           <div className={styles.burger_menu_inner}>
             {mains.map((item) => (
-              <div key={item._id} className={styles.main_inner}>
-                <div className={styles.main_inner}>
-                  <BurgerItem data={item} />
+              <Link
+                key={item._id}
+                to={`/ingredients/${item._id}`}
+                state={{ backgroundLocation: location }}
+              >
+                <div key={item._id} className={styles.main_inner}>
+                  <div className={styles.main_inner}>
+                    <BurgerItem data={item} />
+                  </div>
                 </div>
-              </div>
+              </Link>
             ))}
           </div>
         </div>
       </section>
-      {isOpenModalWindow && (
-        <Modal title="Детали ингредиента" closeIngredientDetails={closeIngredientDetails}>
-          <IngredientDetails />
-        </Modal>
-      )}
     </section>
   );
 };

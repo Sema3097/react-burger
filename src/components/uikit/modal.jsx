@@ -4,6 +4,7 @@ import styles from "./uikit.module.css";
 import { CloseIcon } from "@ya.praktikum/react-developer-burger-ui-components";
 import { createPortal } from "react-dom";
 import { ModalOverlay } from "./modal-overlay";
+import { useNavigate } from "react-router-dom";
 
 const modalElement = document.getElementById("modal");
 
@@ -11,8 +12,8 @@ const Modal = ({
   children,
   title,
   closeOrderDetails,
-  closeIngredientDetails,
 }) => {
+
   useEffect(() => {
     function onEsc(e) {
       if (e.code === "Escape") {
@@ -23,9 +24,10 @@ const Modal = ({
     return () => document.removeEventListener("keydown", onEsc);
   }, []);
 
+  const navigate = useNavigate();
+
   const closeModal = () => {
-    closeIngredientDetails && closeIngredientDetails();
-    closeOrderDetails && closeOrderDetails();
+    (closeOrderDetails && closeOrderDetails()) || navigate("/");
   };
 
   return createPortal(
@@ -42,8 +44,7 @@ const Modal = ({
         <main>{children}</main>
       </div>
       <ModalOverlay
-        closeOrderDetails={closeOrderDetails}
-        closeIngredientDetails={closeIngredientDetails}
+        closeModal={closeModal}
       />
     </>,
     modalElement
@@ -54,7 +55,6 @@ Modal.propTypes = {
   title: PropTypes.string,
   children: PropTypes.element.isRequired,
   closeOrderDetails: PropTypes.func,
-  closeIngredientDetails: PropTypes.func,
 };
 
 export { Modal };

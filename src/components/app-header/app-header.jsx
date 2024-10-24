@@ -6,6 +6,7 @@ import {
   ListIcon,
   ProfileIcon,
 } from "@ya.praktikum/react-developer-burger-ui-components";
+import { NavLink } from "react-router-dom";
 
 const AppHeader = () => {
   return (
@@ -14,17 +15,26 @@ const AppHeader = () => {
         <nav className={styles.menu}>
           <div className={styles.burgericon}>
             <BurgerIcon type="primary" />
-            <a href="/" className="text text_type_main-default">
+            <NavLink
+              to="/"
+              className={({ isActive }) =>
+                `${"text text_type_main-default"}
+                ${isActive ? styles.activeLink : styles.link}`
+              }
+            >
               Конструктор
-            </a>
+            </NavLink>
           </div>
 
           <div className={styles.listicon}>
             <ListIcon type="secondary" />
 
-            <a href="/" className={`${styles.link} text text_type_main-default`}>
+            <NavLink
+              to={"/"}
+              className={`${styles.link} text text_type_main-default`}
+            >
               Лента заказов
-            </a>
+            </NavLink>
           </div>
         </nav>
 
@@ -33,9 +43,15 @@ const AppHeader = () => {
 
           <div className={styles.profileicon}>
             <ProfileIcon type="secondary" />
-            <a href="/" className={`${styles.link} text text_type_main-default`}>
+            <NavLink
+              to={"/profile"}
+              className={({ isActive }) =>
+                `${"text text_type_main-default"}
+                ${isActive ? styles.activeLink : styles.link}`
+              }
+            >
               Личный кабинет
-            </a>
+            </NavLink>
           </div>
         </div>
       </div>

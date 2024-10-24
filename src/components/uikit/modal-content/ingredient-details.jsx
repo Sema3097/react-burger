@@ -1,24 +1,27 @@
 import React from "react";
 import styles from "./modal-content.module.css";
-import { useSelector } from "react-redux";
+import { useParams } from "react-router-dom";
 
-const IngredientDetails = () => {
-  const ingredientDescription = useSelector(
-    (state) => state.addData.ingredientDescription
-  );
+const IngredientDetails = ({ ingredients }) => {
+  const { id } = useParams();
+  const ingredient = ingredients.find((elem) => elem._id === id);
+
+  if (!ingredient) {
+    return <h1>Подождите...</h1>;
+  }
 
   return (
     <>
       <div className={styles.IngredientDetails_container}>
         <img
           className={styles.IngredientDetails_img}
-          src={ingredientDescription.image}
+          src={ingredient.image}
           alt="logo"
         />
         <h2
           className={`${styles.IngredientDetails_title} text text_type_main-medium`}
         >
-          {ingredientDescription.name}
+          {ingredient.name}
         </h2>
         <div
           className={`${styles.IngredientDetails_inner} text text_type_main-default text_color_inactive`}
@@ -28,7 +31,7 @@ const IngredientDetails = () => {
             <p
               className={`${styles.description_info} text text_type_digits-default`}
             >
-              {ingredientDescription.calories}
+              {ingredient.calories}
             </p>
           </div>
           <div className={styles.IngredientDetails_description}>
@@ -36,7 +39,7 @@ const IngredientDetails = () => {
             <p
               className={`${styles.description_info} text text_type_digits-default`}
             >
-              {ingredientDescription.proteins}
+              {ingredient.proteins}
             </p>
           </div>
           <div className={styles.IngredientDetails_description}>
@@ -44,7 +47,7 @@ const IngredientDetails = () => {
             <p
               className={`${styles.description_info} text text_type_digits-default`}
             >
-              {ingredientDescription.fat}
+              {ingredient.fat}
             </p>
           </div>
           <div className={styles.IngredientDetails_description}>
@@ -52,7 +55,7 @@ const IngredientDetails = () => {
             <p
               className={`${styles.description_info} text text_type_digits-default`}
             >
-              {ingredientDescription.carbohydrates}
+              {ingredient.carbohydrates}
             </p>
           </div>
         </div>
