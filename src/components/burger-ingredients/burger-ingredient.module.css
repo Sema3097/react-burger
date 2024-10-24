@@ -10,6 +10,13 @@
 .burger_menu {
   overflow: auto;
   height: 70vh;
+ 
+}
+
+.burger_menu_inner {
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
 }
 
 .title {

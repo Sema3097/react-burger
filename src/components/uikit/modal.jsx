@@ -7,16 +7,26 @@ import { ModalOverlay } from "./modal-overlay";
 
 const modalElement = document.getElementById("modal");
 
-const Modal = ({ children, onClose, title }) => {
+const Modal = ({
+  children,
+  title,
+  closeOrderDetails,
+  closeIngredientDetails,
+}) => {
   useEffect(() => {
     function onEsc(e) {
       if (e.code === "Escape") {
-        onClose();
+        closeModal();
       }
     }
     document.addEventListener("keydown", onEsc);
     return () => document.removeEventListener("keydown", onEsc);
-  }, [onClose]);
+  }, []);
+
+  const closeModal = () => {
+    closeIngredientDetails && closeIngredientDetails();
+    closeOrderDetails && closeOrderDetails();
+  };
 
   return createPortal(
     <>
@@ -24,23 +34,27 @@ const Modal = ({ children, onClose, title }) => {
         <header className={styles.header}>
           <article className="text text_type_main-medium">{title}</article>
           <CloseIcon
-            onClick={() => onClose()}
+            onClick={closeModal}
             type="primary"
             className={styles.cross}
           />
         </header>
         <main>{children}</main>
       </div>
-      <ModalOverlay onClose={onClose} />
+      <ModalOverlay
+        closeOrderDetails={closeOrderDetails}
+        closeIngredientDetails={closeIngredientDetails}
+      />
     </>,
     modalElement
   );
 };
 
 Modal.propTypes = {
-  onClose: PropTypes.func.isRequired,
   title: PropTypes.string,
   children: PropTypes.element.isRequired,
+  closeOrderDetails: PropTypes.func,
+  closeIngredientDetails: PropTypes.func,
 };
 
 export { Modal };
