@@ -2,6 +2,7 @@ import React from "react";
 import styles from "./modal-content.module.css";
 import Done from "../../../images/done.svg";
 import PropTypes from "prop-types";
+import { ingredientPropType } from "../../../utils/types";
 
 const OrderDetails = ({ responseData }) => {
   if (!responseData || !responseData.order || !responseData.order.number) {
@@ -33,7 +34,22 @@ OrderDetails.propTypes = {
     success: PropTypes.bool.isRequired,
     name: PropTypes.string.isRequired,
     order: PropTypes.shape({
+      createdAt: PropTypes.string.isRequired,
+      ingredients: PropTypes.arrayOf(
+        PropTypes.shape(ingredientPropType.isRequired)
+      ).isRequired,
+      name: PropTypes.string.isRequired,
       number: PropTypes.number.isRequired,
+      owner: PropTypes.shape({
+        createdAt: PropTypes.string.isRequired,
+        email: PropTypes.string.isRequired,
+        name: PropTypes.string.isRequired,
+        updatedAt: PropTypes.string.isRequired,
+      }).isRequired,
+      price: PropTypes.number.isRequired,
+      status: PropTypes.string.isRequired,
+      updatedAt: PropTypes.string.isRequired,
+      _id: PropTypes.string.isRequired,
     }).isRequired,
   }),
 };

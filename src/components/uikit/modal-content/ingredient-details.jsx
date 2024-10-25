@@ -1,6 +1,8 @@
 import React from "react";
 import styles from "./modal-content.module.css";
 import { useParams } from "react-router-dom";
+import PropTypes from "prop-types";
+import { ingredientPropType } from "../../../utils/types";
 
 const IngredientDetails = ({ ingredients }) => {
   const { id } = useParams();
@@ -62,6 +64,11 @@ const IngredientDetails = ({ ingredients }) => {
       </div>
     </>
   );
+};
+
+IngredientDetails.propTypes = {
+  ingredients: PropTypes.arrayOf(PropTypes.shape(ingredientPropType.isRequired))
+    .isRequired,
 };
 
 export { IngredientDetails };

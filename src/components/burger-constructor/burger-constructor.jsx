@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, } from "react";
 import {
   CurrencyIcon,
   Button,
@@ -21,7 +21,7 @@ import { useSendDataMutation } from "../../services/getting-order";
 import { closesModal } from "../../services/getting-and-updating-modal";
 import { useNavigate } from "react-router-dom";
 import { Preloader } from "../uikit/modal-content/preloader";
-import { fetchWithRefresh, getUser, refreshToken } from "../../utils/api";
+import { refreshToken } from "../../utils/api";
 
 const BurgerConstructor = () => {
   const [loading, setLoading] = useState(false);
@@ -51,7 +51,6 @@ const BurgerConstructor = () => {
   const navigate = useNavigate();
 
   const openModalWindow = async () => {
-
     if (user) {
       setLoading(true);
       setTimeout(async () => {
@@ -69,7 +68,6 @@ const BurgerConstructor = () => {
               console.error("Failed to refresh token", refreshError);
             }
           }
-          console.error(error);
         } finally {
           setLoading(false);
         }

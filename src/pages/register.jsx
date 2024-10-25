@@ -6,7 +6,7 @@ import {
   Button,
 } from "@ya.praktikum/react-developer-burger-ui-components";
 import styles from "./pages.module.css";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useRegisterMutation } from "../services/safety/register-slice";
 
 const RegisterPage = () => {
@@ -15,6 +15,7 @@ const RegisterPage = () => {
   const [password, setPassword] = useState("");
 
   const [register, { isLoading, isSuccess, isError }] = useRegisterMutation();
+  const navigate = useNavigate();
 
   const handleRegister = async (e) => {
     e.preventDefault();
@@ -29,6 +30,7 @@ const RegisterPage = () => {
       setName("");
       setMail("");
       setPassword("");
+      navigate("/");
     } catch (error) {
       console.error(error);
     }
