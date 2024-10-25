@@ -6,20 +6,12 @@ import {
 } from "@ya.praktikum/react-developer-burger-ui-components";
 import PropTypes from "prop-types";
 import { ingredientPropType } from "../../utils/types";
-import { useDispatch, useSelector } from "react-redux";
-import { openModal } from "../../services/add-data-to-modal";
-import { addData } from "../../services/add-data-to-modal";
+import { useSelector } from "react-redux";
 import { useDrag } from "react-dnd";
 
 const BurgerItem = ({ data }) => {
   const burgerFilling = useSelector((state) => state.filling.burgerFilling);
   const burgerBuns = useSelector((state) => state.filling.burgerBuns);
-
-  const dispatch = useDispatch();
-  const openModalWindow = () => {
-    dispatch(openModal(true));
-    dispatch(addData(data));
-  };
 
   const getIngredientCount = (data) => {
     if (data.type === "bun") {
@@ -36,11 +28,7 @@ const BurgerItem = ({ data }) => {
   });
 
   return (
-    <div
-      ref={drugRef}
-      className={styles.main_item_card}
-      onClick={openModalWindow}
-    >
+    <div ref={drugRef} className={styles.main_item_card}>
       <Counter
         count={getIngredientCount(data)}
         size="default"
@@ -60,7 +48,7 @@ const BurgerItem = ({ data }) => {
 };
 
 BurgerItem.propTypes = {
-  data: PropTypes.shape(ingredientPropType.isRequired).isRequired,
+  data: PropTypes.shape(ingredientPropType.isRequired),
 };
 
 export { BurgerItem };
