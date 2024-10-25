@@ -1,7 +1,7 @@
 import { UPDATE_DATA_USER } from "./data";
 import { UPDATE_TOKEN } from "./data";
 
-const checkResponse = (res) => {
+export const checkResponse = (res) => {
     return res.ok ? res.json() : res.json().then((err) => Promise.reject(err));
   };
   
@@ -41,7 +41,8 @@ const checkResponse = (res) => {
         throw err;
       }
     }
-  };  
+  };
+  
 
   export const getUser = async () => {
     const token = localStorage.getItem("accessToken");

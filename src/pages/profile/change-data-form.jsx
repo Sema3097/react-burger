@@ -6,59 +6,67 @@ import {
   Button,
 } from "@ya.praktikum/react-developer-burger-ui-components";
 import { UPDATE_DATA_USER } from "../../utils/data";
+import { getUser } from "../../utils/api";
+import { refreshToken } from "../../utils/api";
+import { checkResponse } from "../../utils/api";
 
 const ChangeDataForm = () => {
   const [name, setName] = useState("");
   const [mail, setMail] = useState("");
   const [password, setPassword] = useState("");
+  const [initialData, setInitialData] = useState({
+    name: "",
+    mail: "",
+  });
 
   const token = localStorage.getItem("accessToken");
 
   useEffect(() => {
-    fetch(UPDATE_DATA_USER, {
-      method: "GET",
-      headers: {
-        Authorization: token,
-      },
-    })
-      .then((res) => {
-        if (!res.ok) {
-          throw new Error("Error");
-        }
-        return res.json();
-      })
-      .then((data) => {
+    const fetchData = async () => {
+      try {
+        const data = await getUser();
         setName(data.user.name);
         setMail(data.user.email);
-      })
-      .catch((err) => {
-        console.error(err);
-      });
+        setInitialData({ name: data.user.name, mail: data.user.email });
+      } catch (err) {
+        if (err.message === "jwt expired") {
+          await refreshToken();
+          fetchData();
+        } else {
+          console.error(err);
+        }
+      }
+    };
+    fetchData();
   }, [token]);
 
   const changeDataAuth = async (e) => {
     e.preventDefault();
-
-    fetch(UPDATE_DATA_USER, {
-      method: "PATCH",
-      headers: {
-        Authorization: token,
-      },
-      body: JSON.stringify({ name: name, mail: mail, password: password }),
-    })
-      .then((res) => {
-        if (!res.ok) {
-          throw new Error("Error");
-        }
-        return res.json();
-      })
-      .then((data) => {
-        setName(data.user.name);
-        setMail(data.user.email);
-      })
-      .catch((err) => {
+    try {
+      await fetch(UPDATE_DATA_USER, {
+        method: "PATCH",
+        headers: {
+          Authorization: token,
+        },
+        body: JSON.stringify({ name, mail, password }),
+      }).then(checkResponse);
+      const updatedData = await getUser();
+      setName(updatedData.user.name);
+      setMail(updatedData.user.email);
+    } catch (err) {
+      if (err.message === "jwt expired") {
+        await refreshToken();
+        changeDataAuth(e);
+      } else {
         console.error(err);
-      });
+      }
+    }
+  };
+
+  const hanldeCancel = () => {
+    setName(initialData.name);
+    setMail(initialData.mail);
+    setPassword("");
   };
 
   return (
@@ -98,7 +106,8 @@ const ChangeDataForm = () => {
               Сохранить
             </Button>
             <Button
-              htmlType="submit"
+              htmlType="button"
+              onClick={hanldeCancel}
               type="primary"
               size="large"
               extraClass="ml-2"

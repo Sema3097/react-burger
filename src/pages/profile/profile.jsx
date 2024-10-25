@@ -13,6 +13,8 @@ const Profile = () => {
     try {
       await handOverToken();
       dispatch(logout());
+      localStorage.removeItem("accessToken");
+      localStorage.removeItem("refreshToken");
     } catch (err) {
       console.error(err);
     }

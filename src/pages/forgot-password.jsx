@@ -20,7 +20,7 @@ const ForgotPassword = () => {
     })
       .then((res) => {
         if (res.ok) {
-          navigate("/reset-password");
+          navigate("/reset-password", {state: {fromForgot: true}});
         }
         return res.json();
       })

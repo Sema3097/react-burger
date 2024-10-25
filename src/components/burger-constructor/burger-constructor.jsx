@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import {
   CurrencyIcon,
   Button,
@@ -13,14 +13,18 @@ import {
   addFilling,
   addBuns,
   deleteBuns,
-  clearConstructor
+  clearConstructor,
 } from "../../services/constructor-ingredients-save";
 import { openModal } from "../../services/getting-and-updating-modal";
 import { BurgerCostructorIngredient } from "./burger-costructor-ingredient";
 import { useSendDataMutation } from "../../services/getting-order";
 import { closesModal } from "../../services/getting-and-updating-modal";
+import { useNavigate } from "react-router-dom";
+import { Preloader } from "../uikit/modal-content/preloader";
+import { fetchWithRefresh, getUser, refreshToken } from "../../utils/api";
 
 const BurgerConstructor = () => {
+  const [loading, setLoading] = useState(false);
   const [sendData, { isLoading, isError, data: responseData }] =
     useSendDataMutation();
 
@@ -42,16 +46,36 @@ const BurgerConstructor = () => {
     ...burgerBuns.map((item) => item._id),
   ];
 
+  const user = useSelector((state) => state.user.user);
+
+  const navigate = useNavigate();
+
   const openModalWindow = async () => {
-    try {
-      const dataToSend = { ingredients: allIngredients };
-      await sendData(dataToSend)
-        .then(() => {
+
+    if (user) {
+      setLoading(true);
+      setTimeout(async () => {
+        try {
+          const dataToSend = { ingredients: allIngredients };
+          await sendData(dataToSend);
           dispatch(openModal(true));
           dispatch(clearConstructor());
-        });
-    } catch (error) {
-      console.error(error);
+        } catch (error) {
+          if (error.message === "jwt expired") {
+            try {
+              await refreshToken();
+              openModalWindow();
+            } catch (refreshError) {
+              console.error("Failed to refresh token", refreshError);
+            }
+          }
+          console.error(error);
+        } finally {
+          setLoading(false);
+        }
+      }, 15000);
+    } else {
+      navigate("/login");
     }
   };
 
@@ -149,7 +173,11 @@ const BurgerConstructor = () => {
           Оформить заказ
         </Button>
       </div>
-      {isLoading ? (
+      {loading ? (
+        <Modal loading={loading} closeOrderDetails={closeOrderDetails}>
+          <Preloader />
+        </Modal>
+      ) : isLoading ? (
         <h1>Подождите...</h1>
       ) : (
         responseData &&

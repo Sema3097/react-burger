@@ -8,12 +8,7 @@ import { useNavigate } from "react-router-dom";
 
 const modalElement = document.getElementById("modal");
 
-const Modal = ({
-  children,
-  title,
-  closeOrderDetails,
-}) => {
-
+const Modal = ({ children, title, closeOrderDetails, loading }) => {
   useEffect(() => {
     function onEsc(e) {
       if (e.code === "Escape") {
@@ -35,17 +30,17 @@ const Modal = ({
       <div className={styles.modal}>
         <header className={styles.header}>
           <article className="text text_type_main-medium">{title}</article>
-          <CloseIcon
-            onClick={closeModal}
-            type="primary"
-            className={styles.cross}
-          />
+          {loading ? null : (
+            <CloseIcon
+              onClick={closeModal}
+              type="primary"
+              className={styles.cross}
+            />
+          )}
         </header>
         <main>{children}</main>
       </div>
-      <ModalOverlay
-        closeModal={closeModal}
-      />
+      <ModalOverlay closeModal={closeModal} />
     </>,
     modalElement
   );
@@ -55,6 +50,7 @@ Modal.propTypes = {
   title: PropTypes.string,
   children: PropTypes.element.isRequired,
   closeOrderDetails: PropTypes.func,
+  loading: PropTypes.bool,
 };
 
 export { Modal };

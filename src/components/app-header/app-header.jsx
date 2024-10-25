@@ -14,7 +14,6 @@ const AppHeader = () => {
       <div className={styles.container}>
         <nav className={styles.menu}>
           <div className={styles.burgericon}>
-            <BurgerIcon type="primary" />
             <NavLink
               to="/"
               className={({ isActive }) =>
@@ -22,18 +21,29 @@ const AppHeader = () => {
                 ${isActive ? styles.activeLink : styles.link}`
               }
             >
-              Конструктор
+              {({ isActive }) => (
+                <>
+                  <BurgerIcon type={isActive ? "primary" : "secondary"} />
+                  <p>Конструктор</p>
+                </>
+              )}
             </NavLink>
           </div>
 
           <div className={styles.listicon}>
-            <ListIcon type="secondary" />
-
             <NavLink
-              to={"/"}
-              className={`${styles.link} text text_type_main-default`}
+              to={"/order-feed"}
+              className={({ isActive }) =>
+                `${"text text_type_main-default"}
+                ${isActive ? styles.activeLink : styles.link}`
+              }
             >
-              Лента заказов
+              {({ isActive }) => (
+                <>
+                  <ListIcon type={isActive ? "primary" : "secondary"} />
+                  <p>Лента заказов</p>
+                </>
+              )}
             </NavLink>
           </div>
         </nav>
@@ -42,7 +52,6 @@ const AppHeader = () => {
           <Logo />
 
           <div className={styles.profileicon}>
-            <ProfileIcon type="secondary" />
             <NavLink
               to={"/profile"}
               className={({ isActive }) =>
@@ -50,7 +59,12 @@ const AppHeader = () => {
                 ${isActive ? styles.activeLink : styles.link}`
               }
             >
-              Личный кабинет
+              {({ isActive }) => (
+                <>
+                  <ProfileIcon type={isActive ? "primary" : "secondary"} />
+                  <p>Личный кабинет</p>
+                </>
+              )}
             </NavLink>
           </div>
         </div>

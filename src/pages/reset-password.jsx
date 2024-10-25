@@ -1,17 +1,25 @@
-import { React, useState } from "react";
+import { React, useEffect, useState } from "react";
 import {
   PasswordInput,
   Input,
   Button,
 } from "@ya.praktikum/react-developer-burger-ui-components";
 import styles from "./pages.module.css";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { RESET_PASSWORD } from "../utils/data";
 
 const ResetPassword = () => {
   const [password, setPassword] = useState("");
   const [token, setToken] = useState("");
   const navigate = useNavigate();
+  const location = useLocation();
+
+  useEffect(() => {
+    const fromForgot = location.state?.fromForgot;
+    if (!fromForgot) {
+      navigate("/forgot-password");
+    }
+  }, [location, navigate]);
 
   const throwPassword = (e) => {
     e.preventDefault();

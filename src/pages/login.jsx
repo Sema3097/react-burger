@@ -7,7 +7,7 @@ import {
 import styles from "./pages.module.css";
 import { Link } from "react-router-dom";
 import { useAuthMutation } from "../services/safety/auth-slice";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import { login } from "../services/safety/user";
 
 const LoginPage = () => {

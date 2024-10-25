@@ -14,10 +14,13 @@ import { DndProvider } from "react-dnd";
 import { HTML5Backend } from "react-dnd-html5-backend";
 import { useGetFetchQuery } from "../../services/fetch-ingredients";
 import { useEffect, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import { getUser } from "../../utils/api";
+import { useDispatch } from "react-redux";
+import { getUser, refreshToken } from "../../utils/api";
 import { setUser } from "../../services/safety/user";
 import { setIsAuthChecked } from "../../services/safety/user";
+import { OnlyAuth, OnlyUnAuth } from "../protected/protected-route";
+import { NotFoundPages } from "../../pages/not-found-pages";
+import { OrderFeed } from "../../pages/order-feed";
 
 const App = () => {
   const {
@@ -43,7 +46,10 @@ const App = () => {
           const user = await getUser();
           dispatch(setUser(user));
         } catch (err) {
-          console.error("Failed to fetch user:", err);
+          if(err.message === 'jwt expired') {
+            await refreshToken();
+            fetchUser();
+          }
         } finally {
           dispatch(setIsAuthChecked(true));
         }
@@ -56,12 +62,6 @@ const App = () => {
 
     fetchUser();
   }, [location, dispatch]);
-
-  const user = useSelector((state) => state.user.user);
-  const auth = useSelector((state) => state.user.isAuthChecked);
-  console.log(user);
-  console.log(auth);
-  // eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY3MTc5OGE5ZDgyOWJlMDAxYzc3N2E1NiIsImlhdCI6MTcyOTc1NzIzNCwiZXhwIjoxNzI5NzU4NDM0fQ.DLWFvtTYp54HL--hA7orpfzE_7z6WlXZPjJAwOjDXEY
 
   if (error) return <h1>{error}</h1>;
   if (isSucces) return ingredients;
@@ -85,17 +85,39 @@ const App = () => {
           <Route element={<LayoutHeader />}>
             <Route path="/" element={<HomePage ingredients={ingredients} />} />
             <Route
+                path="/order-feed"
+                element={<OnlyAuth component={<OrderFeed />} />}
+              />
+            <Route
               path="/ingredients/:id"
               element={<IngredientDetails ingredients={ingredients} />}
             />
-            <Route path="/profile" element={<LayoutProfile />}>
+            <Route
+              path="/profile"
+              element={<OnlyAuth component={<LayoutProfile />} />}
+            >
               <Route index element={<ChangeDataForm />} />
               <Route path="orders" element={<Orders />} />
+              
             </Route>
-            <Route path="/login" element={<LoginPage />} />
-            <Route path="/register" element={<RegisterPage />} />
-            <Route path="/reset-password" element={<ResetPassword />} />
-            <Route path="/forgot-password" element={<ForgotPassword />} />
+            <Route
+              path="/login"
+              element={<OnlyUnAuth component={<LoginPage />} />}
+            />
+            <Route
+              path="/register"
+              element={<OnlyUnAuth component={<RegisterPage />} />}
+            />
+            <Route
+              path="/reset-password"
+              element={<OnlyUnAuth component={<ResetPassword />} />}
+            />
+            <Route
+              path="/forgot-password"
+              element={<OnlyUnAuth component={<ForgotPassword />} />}
+            />
+
+            <Route path="*" element={<NotFoundPages />} />
           </Route>
         </Routes>
       </div>
