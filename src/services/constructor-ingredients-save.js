@@ -70,6 +70,6 @@ export const {
   deleteFilling,
   deleteBuns,
   transferIngredients,
-  clearConstructor
+  clearConstructor,
 } = constructorSlice.actions;
 export default constructorSlice.reducer;

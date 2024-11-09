@@ -1,9 +1,13 @@
-import React from "react";
+import React, { FC } from "react";
 import styles from "./modal-content.module.css";
 import Done from "../../../images/done.svg";
-import PropTypes from "prop-types";
+import { IResponseDataToOrderDetails } from "../../../utils/types";
 
-const OrderDetails = ({ responseData }) => {
+interface IOrderDetails {
+  responseData: IResponseDataToOrderDetails;
+}
+
+const OrderDetails: FC<IOrderDetails> = ({ responseData }) => {
   if (!responseData || !responseData.order || !responseData.order.number) {
     return <h1>Нет данных</h1>;
   }
@@ -26,16 +30,6 @@ const OrderDetails = ({ responseData }) => {
       </p>
     </div>
   );
-};
-
-OrderDetails.propTypes = {
-  responseData: PropTypes.shape({
-    success: PropTypes.bool.isRequired,
-    name: PropTypes.string.isRequired,
-    order: PropTypes.shape({
-      number: PropTypes.number.isRequired,
-    }).isRequired,
-  }),
 };
 
 export { OrderDetails };

@@ -1,4 +1,4 @@
-import React from "react";
+import React, { FC, useState } from "react";
 import {
   CurrencyIcon,
   Button,
@@ -13,55 +13,88 @@ import {
   addFilling,
   addBuns,
   deleteBuns,
-  clearConstructor
+  clearConstructor,
 } from "../../services/constructor-ingredients-save";
 import { openModal } from "../../services/getting-and-updating-modal";
 import { BurgerCostructorIngredient } from "./burger-costructor-ingredient";
 import { useSendDataMutation } from "../../services/getting-order";
 import { closesModal } from "../../services/getting-and-updating-modal";
+import { useNavigate } from "react-router-dom";
+import { Preloader } from "../uikit/modal-content/preloader";
+import { refreshToken } from "../../utils/api";
+import { Iingredient, IUserAuth } from "../../utils/types";
 
-const BurgerConstructor = () => {
+const BurgerConstructor: FC = () => {
+  const [loading, setLoading] = useState<boolean>(false);
+
   const [sendData, { isLoading, isError, data: responseData }] =
     useSendDataMutation();
 
   const dispatch = useDispatch();
 
-  const burgerFilling = useSelector((state) => state.filling.burgerFilling);
-  const burgerBuns = useSelector((state) => state.filling.burgerBuns);
+  const burgerFilling = useSelector(
+    (state: { filling: { burgerFilling: Iingredient[] } }) =>
+      state.filling.burgerFilling
+  );
+  const burgerBuns = useSelector(
+    (state: { filling: { burgerBuns: Iingredient[] } }) =>
+      state.filling.burgerBuns
+  );
   const isOpenModalWindow = useSelector(
-    (state) => state.updatingModal.isOpenModal
+    (state: { updatingModal: { isOpenModal: boolean } }) =>
+      state.updatingModal.isOpenModal
   );
 
-  const closeOrderDetails = () => {
-    dispatch(closesModal(false));
+  const closeOrderDetails = (): void => {
+    dispatch(closesModal());
   };
 
   const allIngredients = [
-    ...burgerBuns.map((item) => item._id),
-    ...burgerFilling.map((item) => item._id),
-    ...burgerBuns.map((item) => item._id),
+    ...burgerBuns.map((item: Iingredient) => item._id),
+    ...burgerFilling.map((item: Iingredient) => item._id),
+    ...burgerBuns.map((item: Iingredient) => item._id),
   ];
 
-  const openModalWindow = async () => {
-    try {
-      const dataToSend = { ingredients: allIngredients };
-      await sendData(dataToSend)
-        .then(() => {
-          dispatch(openModal(true));
-          dispatch(clearConstructor());
-        });
-    } catch (error) {
-      console.error(error);
+  const user: IUserAuth = useSelector(
+    (state: { user: { user: IUserAuth } }) => state.user.user
+  );
+
+  const navigate = useNavigate();
+
+  const openModalWindow = async (): Promise<void> => {
+    if (user) {
+      setLoading(true);
+      setTimeout(async () => {
+        try {
+          const dataToSend = { ingredients: allIngredients };
+          await sendData(dataToSend);
+          dispatch(openModal());
+          dispatch(clearConstructor(null));
+        } catch (error) {
+          if (error instanceof Error && error.message === "jwt expired") {
+            try {
+              await refreshToken();
+              openModalWindow();
+            } catch (refreshError) {
+              console.error("Failed to refresh token", refreshError);
+            }
+          }
+        } finally {
+          setLoading(false);
+        }
+      }, 15000);
+    } else {
+      navigate("/login");
     }
   };
 
-  const deleteBurgerBuns = (uniqueid) => {
+  const deleteBurgerBuns = (uniqueid: string) => {
     dispatch(deleteBuns(uniqueid));
   };
 
   const [, dropRef] = useDrop({
     accept: "filling",
-    drop: (item) => {
+    drop: (item: Iingredient) => {
       if (item.type === "bun") {
         dispatch(addBuns(item));
       } else {
@@ -92,7 +125,11 @@ const BurgerConstructor = () => {
                 text={bun.name + "(верх)"}
                 price={bun.price}
                 thumbnail={bun.image}
-                handleClose={() => deleteBurgerBuns(bun.uniqueid)}
+                handleClose={() => {
+                  if (bun.uniqueid) {
+                    deleteBurgerBuns(bun.uniqueid);
+                  }
+                }}
               />
             ))
           )}
@@ -129,7 +166,11 @@ const BurgerConstructor = () => {
                 text={bun.name + "(низ)"}
                 price={bun.price}
                 thumbnail={bun.image}
-                handleClose={() => deleteBurgerBuns(bun.uniqueid)}
+                handleClose={() => {
+                  if (bun.uniqueid) {
+                    deleteBurgerBuns(bun.uniqueid);
+                  }
+                }}
               />
             ))
           )}
@@ -149,7 +190,11 @@ const BurgerConstructor = () => {
           Оформить заказ
         </Button>
       </div>
-      {isLoading ? (
+      {loading ? (
+        <Modal loading={loading} closeOrderDetails={closeOrderDetails}>
+          <Preloader />
+        </Modal>
+      ) : isLoading ? (
         <h1>Подождите...</h1>
       ) : (
         responseData &&

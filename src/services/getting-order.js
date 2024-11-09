@@ -5,6 +5,13 @@ export const apiOrder = createApi({
   reducerPath: "apiOrder",
   baseQuery: fetchBaseQuery({
     baseUrl: API_ORDER,
+    prepareHeaders: (headers) => {
+      const token = localStorage.getItem('accessToken');
+      if(token) {
+        headers.set('Authorization', token);
+      }
+      return headers;
+    }
   }),
   endpoints: (builder) => ({
     sendData: builder.mutation({
