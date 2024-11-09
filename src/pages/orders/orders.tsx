@@ -1,7 +1,7 @@
-import React from "react";
+import React, { FC } from "react";
 import styles from "./order-styles.module.css";
 
-const Orders = () => {
+const Orders: FC = () => {
   return (
     <h1 className={`${styles.title} text text_type_main-large`}>
       Здесь будут отображаться Ваши заказы

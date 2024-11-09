@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { FC, FormEvent, useEffect, useState } from "react";
 import styles from "./profile-styles.module.css";
 import {
   PasswordInput,
@@ -10,11 +10,17 @@ import { getUser } from "../../utils/api";
 import { refreshToken } from "../../utils/api";
 import { checkResponse } from "../../utils/api";
 
-const ChangeDataForm = () => {
-  const [name, setName] = useState("");
-  const [mail, setMail] = useState("");
-  const [password, setPassword] = useState("");
-  const [initialData, setInitialData] = useState({
+
+interface IInitialData {
+  name: string;
+  mail: string;
+}
+
+const ChangeDataForm: FC = () => {
+  const [name, setName] = useState<string>("");
+  const [mail, setMail] = useState<string>("");
+  const [password, setPassword] = useState<string>("");
+  const [initialData, setInitialData] = useState<IInitialData>({
     name: "",
     mail: "",
   });
@@ -25,28 +31,33 @@ const ChangeDataForm = () => {
     const fetchData = async () => {
       try {
         const data = await getUser();
-        setName(data.user.name);
-        setMail(data.user.email);
-        setInitialData({ name: data.user.name, mail: data.user.email });
+          setName(data.user.name);
+          setMail(data.user.email);
+          setInitialData({ name: data.user.name, mail: data.user.email });
       } catch (err) {
-        if (err.message === "jwt expired") {
-          await refreshToken();
-          fetchData();
-        } else {
-          console.error(err);
+        if (typeof err === "object" && err !== null && "message" in err) {
+          const errorMessage = (err as { message: string }).message;
+          if (errorMessage === "jwt expired") {
+            await refreshToken();
+            fetchData();
+          } else {
+            console.error(err);
+          }
         }
       }
     };
     fetchData();
   }, [token]);
 
-  const changeDataAuth = async (e) => {
+  const changeDataAuth = async (
+    e: FormEvent<HTMLFormElement>
+  ): Promise<void> => {
     e.preventDefault();
     try {
       await fetch(UPDATE_DATA_USER, {
         method: "PATCH",
         headers: {
-          Authorization: token,
+          Authorization: token || "",
         },
         body: JSON.stringify({ name, mail, password }),
       }).then(checkResponse);
@@ -54,16 +65,19 @@ const ChangeDataForm = () => {
       setName(updatedData.user.name);
       setMail(updatedData.user.email);
     } catch (err) {
-      if (err.message === "jwt expired") {
-        await refreshToken();
-        changeDataAuth(e);
-      } else {
-        console.error(err);
+      if (typeof err === "object" && err !== null && "message" in err) {
+        const errorMessage = (err as { message: string }).message;
+        if (errorMessage === "jwt expired") {
+          await refreshToken();
+          changeDataAuth(e);
+        } else {
+          console.error(err);
+        }
       }
     }
   };
 
-  const hanldeCancel = () => {
+  const hanldeCancel = (): void => {
     setName(initialData.name);
     setMail(initialData.mail);
     setPassword("");

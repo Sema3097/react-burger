@@ -13,7 +13,7 @@ import { IngredientDetails } from "../uikit/modal-content/ingredient-details";
 import { DndProvider } from "react-dnd";
 import { HTML5Backend } from "react-dnd-html5-backend";
 import { useGetFetchQuery } from "../../services/fetch-ingredients";
-import { useEffect, useState } from "react";
+import { FC, useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
 import { getUser, refreshToken } from "../../utils/api";
 import { setUser } from "../../services/safety/user";
@@ -21,32 +21,26 @@ import { setIsAuthChecked } from "../../services/safety/user";
 import { OnlyAuth, OnlyUnAuth } from "../protected/protected-route";
 import { NotFoundPages } from "../../pages/not-found-pages";
 import { OrderFeed } from "../../pages/order-feed";
+import { Iingredient } from "../../utils/types";
 
-const App = () => {
-  const {
-    ingredients = [],
-    error,
-    isSucces,
-  } = useGetFetchQuery(undefined, {
-    selectFromResult: ({ data }) => ({
-      ingredients: data?.ingredients,
-    }),
-  });
+const App: FC = () => {
+  const { data, error, isSuccess } = useGetFetchQuery(undefined);
 
-  const [ingredientId, setIngredientId] = useState(null);
+  const ingredients: Iingredient[] = data?.ingredients || [];
+  const [ingredientId, setIngredientId] = useState<string | null>(null);
   const dispatch = useDispatch();
 
   const location = useLocation();
   const state = location.state;
 
   useEffect(() => {
-    const fetchUser = async () => {
+    const fetchUser = async (): Promise<void> => {
       if (localStorage.getItem("accessToken")) {
         try {
           const user = await getUser();
           dispatch(setUser(user));
         } catch (err) {
-          if(err.message === 'jwt expired') {
+          if (err instanceof Error && err.message === "jwt expired") {
             await refreshToken();
             fetchUser();
           }
@@ -56,15 +50,19 @@ const App = () => {
       } else {
         dispatch(setIsAuthChecked(true));
       }
-      const ingredientIdFromUrl = location.pathname.split("/").pop();
-      setIngredientId(ingredientIdFromUrl);
+      const ingredientIdFromUrl: string | undefined = location.pathname
+        .split("/")
+        .pop();
+      if (ingredientIdFromUrl) {
+        setIngredientId(ingredientIdFromUrl);
+      }
     };
 
     fetchUser();
   }, [location, dispatch]);
 
-  if (error) return <h1>{error}</h1>;
-  if (isSucces) return ingredients;
+  if (error) return <h1>{JSON.stringify(error)}</h1>;
+  if (!isSuccess) return <h1>Загрузка...</h1>;
 
   return (
     <DndProvider backend={HTML5Backend}>
@@ -85,36 +83,35 @@ const App = () => {
           <Route element={<LayoutHeader />}>
             <Route path="/" element={<HomePage ingredients={ingredients} />} />
             <Route
-                path="/order-feed"
-                element={<OnlyAuth component={<OrderFeed />} />}
-              />
+              path="/order-feed"
+              element={<OnlyAuth onlyUnAuth={false} component={<OrderFeed />} />}
+            />
             <Route
               path="/ingredients/:id"
               element={<IngredientDetails ingredients={ingredients} />}
             />
             <Route
               path="/profile"
-              element={<OnlyAuth component={<LayoutProfile />} />}
+              element={<OnlyAuth onlyUnAuth={false} component={<LayoutProfile />} />}
             >
               <Route index element={<ChangeDataForm />} />
               <Route path="orders" element={<Orders />} />
-              
             </Route>
             <Route
               path="/login"
-              element={<OnlyUnAuth component={<LoginPage />} />}
+              element={<OnlyUnAuth onlyUnAuth={true} component={<LoginPage />} />}
             />
             <Route
               path="/register"
-              element={<OnlyUnAuth component={<RegisterPage />} />}
+              element={<OnlyUnAuth onlyUnAuth={true} component={<RegisterPage />} />}
             />
             <Route
               path="/reset-password"
-              element={<OnlyUnAuth component={<ResetPassword />} />}
+              element={<OnlyUnAuth onlyUnAuth={true} component={<ResetPassword />} />}
             />
             <Route
               path="/forgot-password"
-              element={<OnlyUnAuth component={<ForgotPassword />} />}
+              element={<OnlyUnAuth onlyUnAuth={true} component={<ForgotPassword />} />}
             />
 
             <Route path="*" element={<NotFoundPages />} />

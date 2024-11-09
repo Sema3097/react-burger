@@ -1,17 +1,18 @@
-import React from "react";
+import React, { FC } from "react";
 import styles from "./profile-styles.module.css";
 import { NavLink } from "react-router-dom";
 import { useLogoutMutation } from "../../services/safety/logout-slice";
 import { useDispatch } from "react-redux";
 import { logout } from "../../services/safety/user";
 
-const Profile = () => {
+const Profile: FC = () => {
   const [handOverToken] = useLogoutMutation();
   const dispatch = useDispatch();
 
-  const handleLogout = async () => {
+  const handleLogout = async (): Promise<void> => {
     try {
-      await handOverToken();
+      const refreshToken = localStorage.getItem("refreshToken");
+      await handOverToken({ token: refreshToken });
       dispatch(logout());
       localStorage.removeItem("accessToken");
       localStorage.removeItem("refreshToken");
@@ -49,6 +50,7 @@ const Profile = () => {
           </li>
           <li className={styles.profile__item}>
             <NavLink
+              to={"/"}
               onClick={handleLogout}
               className="text text_type_main-medium text_color_inactive"
             >

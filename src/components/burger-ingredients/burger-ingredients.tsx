@@ -1,43 +1,45 @@
-import { React, useState, useRef, useEffect } from "react";
-import PropTypes from "prop-types";
-import { ingredientPropType } from "../../utils/types";
+import React, { useState, useRef, useEffect, FC } from "react";
 import { Tab } from "@ya.praktikum/react-developer-burger-ui-components";
 import styles from "./burger-ingredient.module.css";
 import { BurgerItem } from "./burger-item";
 import { Link, useLocation } from "react-router-dom";
+import { IingredientsProps } from "../../utils/types";
 
-const BurgerIngredients = ({ ingredients }) => {
+const BurgerIngredients: FC<IingredientsProps> = ({ ingredients }) => {
   const location = useLocation();
 
-  const buns = ingredients.filter((sauce) => sauce.type === "bun");
+  const buns = ingredients.filter((bun) => bun.type === "bun");
   const sauces = ingredients.filter((sauce) => sauce.type === "sauce");
-  const mains = ingredients.filter((sauce) => sauce.type === "main");
+  const mains = ingredients.filter((main) => main.type === "main");
 
-  const [current, setCurrent] = useState("one");
+  const [current, setCurrent] = useState<string>("one");
 
-  const burgerMenuRef = useRef(null);
+  const burgerMenuRef = useRef<HTMLDivElement>(null);
 
   const menuItems = ["one", "two", "three"];
 
-  const handleScroll = () => {
-    const sections = burgerMenuRef.current.children;
-
-    for (let i = 0; i < sections.length; i++) {
-      const sectionRect = sections[i].getBoundingClientRect();
-      if (sectionRect.top >= 0 && sectionRect.top < window.innerHeight) {
-        setCurrent(menuItems[i]);
-        break;
+  const handleScroll = (): void => {
+    const sections = burgerMenuRef.current?.children;
+    if (sections) {
+      for (let i = 0; i < sections.length; i++) {
+        const sectionRect = sections[i].getBoundingClientRect();
+        if (sectionRect.top >= 0 && sectionRect.top < window.innerHeight) {
+          setCurrent(menuItems[i]);
+          break;
+        }
       }
     }
   };
 
   useEffect(() => {
     const burgerMenuElement = burgerMenuRef.current;
-    burgerMenuElement.addEventListener("scroll", handleScroll);
+    if (burgerMenuElement) {
+      burgerMenuElement.addEventListener("scroll", handleScroll);
 
-    return () => {
-      burgerMenuElement.removeEventListener("scroll", handleScroll);
-    };
+      return () => {
+        burgerMenuElement.removeEventListener("scroll", handleScroll);
+      };
+    }
   }, []);
 
   return (
@@ -116,11 +118,6 @@ const BurgerIngredients = ({ ingredients }) => {
       </section>
     </section>
   );
-};
-
-BurgerIngredients.propTypes = {
-  ingredients: PropTypes.arrayOf(PropTypes.shape(ingredientPropType.isRequired))
-    .isRequired,
 };
 
 export { BurgerIngredients };

@@ -1,4 +1,4 @@
-import { React, useState } from "react";
+import React, { FC, FormEvent, useState } from "react";
 import {
   EmailInput,
   PasswordInput,
@@ -9,21 +9,25 @@ import { Link } from "react-router-dom";
 import { useAuthMutation } from "../services/safety/auth-slice";
 import { useDispatch } from "react-redux";
 import { login } from "../services/safety/user";
+import { IFetchResponse } from "../utils/types";
 
-const LoginPage = () => {
-  const [mail, setMail] = useState("");
-  const [password, setPassword] = useState("");
+const LoginPage: FC = () => {
+  const [mail, setMail] = useState<string>("");
+  const [password, setPassword] = useState<string>("");
   const dispatch = useDispatch();
 
   const [auth, { isLoading, isSuccess, isError }] = useAuthMutation();
 
-  const handleAuth = async (e) => {
+  const handleAuth = async (e: FormEvent<HTMLFormElement>): Promise<void> => {
     e.preventDefault();
     try {
-      const { data } = await auth({ email: mail, password: password });
-      localStorage.setItem("accessToken", data.accessToken);
-      localStorage.setItem("refreshToken", data.refreshToken);
-      dispatch(login(data));
+      const response = await auth({ email: mail, password: password });
+      if ("data" in response) {
+        const { data } = response as { data: IFetchResponse };
+        localStorage.setItem("accessToken", data.accessToken);
+        localStorage.setItem("refreshToken", data.refreshToken);
+        dispatch(login(data));
+      }
     } catch (err) {
       console.error(err);
     }

@@ -1,16 +1,22 @@
-import React, { useEffect } from "react";
-import PropTypes from "prop-types";
+import React, { FC, ReactNode, useEffect } from "react";
 import styles from "./uikit.module.css";
 import { CloseIcon } from "@ya.praktikum/react-developer-burger-ui-components";
 import { createPortal } from "react-dom";
 import { ModalOverlay } from "./modal-overlay";
 import { useNavigate } from "react-router-dom";
 
-const modalElement = document.getElementById("modal");
+interface IModal {
+  children: ReactNode;
+  title?: string;
+  closeOrderDetails?: () => void;
+  loading?: boolean;
+}
 
-const Modal = ({ children, title, closeOrderDetails, loading }) => {
+const modalElement: HTMLElement | null = document.getElementById("modal");
+
+const Modal: FC<IModal> = ({ children, title, closeOrderDetails, loading }) => {
   useEffect(() => {
-    function onEsc(e) {
+    function onEsc(e: KeyboardEvent) {
       if (e.code === "Escape") {
         closeModal();
       }
@@ -21,9 +27,17 @@ const Modal = ({ children, title, closeOrderDetails, loading }) => {
 
   const navigate = useNavigate();
 
-  const closeModal = () => {
-    (closeOrderDetails && closeOrderDetails()) || navigate("/");
+  const closeModal = (): void => {
+    if (closeOrderDetails) {
+      closeOrderDetails();
+    } else {
+      navigate("/");
+    }
   };
+
+  if (!modalElement) {
+    return null;
+  }
 
   return createPortal(
     <>
@@ -44,13 +58,6 @@ const Modal = ({ children, title, closeOrderDetails, loading }) => {
     </>,
     modalElement
   );
-};
-
-Modal.propTypes = {
-  title: PropTypes.string,
-  children: PropTypes.element.isRequired,
-  closeOrderDetails: PropTypes.func,
-  loading: PropTypes.bool,
 };
 
 export { Modal };

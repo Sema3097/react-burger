@@ -1,9 +1,9 @@
-import React from "react";
+import React, { FC } from "react";
 import styles from "./profile-styles.module.css";
 import { Profile } from "./profile";
 import { Outlet } from "react-router-dom";
 
-const LayoutProfile = () => {
+const LayoutProfile: FC = () => {
   return (
     <div className={styles.container}>
       <Profile />

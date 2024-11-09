@@ -1,34 +1,48 @@
-import { React, useState } from "react";
+import React, { FC, FormEvent, useState } from "react";
 import {
   Input,
   Button,
 } from "@ya.praktikum/react-developer-burger-ui-components";
 import styles from "./pages.module.css";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, NavigateFunction, useNavigate } from "react-router-dom";
 import { FORGOT_PASSWORD } from "../utils/data";
 
-const ForgotPassword = () => {
-  const [email, setEmail] = useState("");
-  const navigate = useNavigate();
+interface IResponseData {
+  success: boolean;
+  message: string;
+}
 
-  const restorePassword = (e) => {
+interface ILocationState {
+  fromForgot: boolean;
+}
+
+const ForgotPassword: FC = () => {
+  const [email, setEmail] = useState<string>("");
+  const navigate: NavigateFunction = useNavigate();
+
+  const restorePassword = async (
+    e: FormEvent<HTMLFormElement>
+  ): Promise<void> => {
     e.preventDefault();
 
-    fetch(FORGOT_PASSWORD, {
-      method: "POST",
-      body: JSON.stringify({ email }),
-    })
-      .then((res) => {
-        if (res.ok) {
-          navigate("/reset-password", {state: {fromForgot: true}});
-        }
-        return res.json();
-      })
-      .catch((error) => {
-        console.error(error);
+    try {
+      const response = await fetch(FORGOT_PASSWORD, {
+        method: "POST",
+        body: JSON.stringify({ email }),
       });
-
-    setEmail("");
+      if (response.ok) {
+        const data: IResponseData = await response.json();
+        if (data.success) {
+          navigate("/reset-password", {
+            state: { fromForgot: true } as ILocationState,
+          });
+        }
+      }
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setEmail("");
+    }
   };
 
   return (

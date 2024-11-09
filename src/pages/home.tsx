@@ -1,11 +1,10 @@
-import React from "react";
+import React, { FC } from "react";
 import { BurgerIngredients } from "../components/burger-ingredients/burger-ingredients";
 import { BurgerConstructor } from "../components/burger-constructor/burger-constructor";
 import styles from "./app.module.css";
-import PropTypes from "prop-types";
-import { ingredientPropType } from "../utils/types";
+import { IingredientsProps } from "../utils/types";
 
-function HomePage({ ingredients }) {
+const HomePage: FC<IingredientsProps> = ({ ingredients }) => {
   return (
     <div className={styles.App}>
       <main className={styles.App_container}>
@@ -15,10 +14,5 @@ function HomePage({ ingredients }) {
     </div>
   );
 }
-
-HomePage.propTypes = {
-  ingredients: PropTypes.arrayOf(PropTypes.shape(ingredientPropType.isRequired))
-    .isRequired,
-};
 
 export default HomePage;

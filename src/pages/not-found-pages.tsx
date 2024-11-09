@@ -1,10 +1,10 @@
-import React from "react";
-import { useNavigate } from "react-router-dom";
+import React, { FC } from "react";
+import { NavigateFunction, useNavigate } from "react-router-dom";
 import { Button } from "@ya.praktikum/react-developer-burger-ui-components";
 import styles from "./pages.module.css";
 
-const NotFoundPages = () => {
-  const navigate = useNavigate();
+const NotFoundPages: FC = () => {
+  const navigate: NavigateFunction = useNavigate();
   const back = () => {
     navigate(-1);
   };

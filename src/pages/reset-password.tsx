@@ -1,4 +1,4 @@
-import { React, useEffect, useState } from "react";
+import React, { FC, FormEvent, useEffect, useState } from "react";
 import {
   PasswordInput,
   Input,
@@ -8,38 +8,42 @@ import styles from "./pages.module.css";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { RESET_PASSWORD } from "../utils/data";
 
-const ResetPassword = () => {
-  const [password, setPassword] = useState("");
-  const [token, setToken] = useState("");
+interface ILocationState {
+  fromForgot?: boolean;
+}
+
+const ResetPassword: FC = () => {
+  const [password, setPassword] = useState<string>("");
+  const [token, setToken] = useState<string>("");
   const navigate = useNavigate();
   const location = useLocation();
 
   useEffect(() => {
-    const fromForgot = location.state?.fromForgot;
+    const fromForgot = (location.state as ILocationState)?.fromForgot;
     if (!fromForgot) {
       navigate("/forgot-password");
     }
   }, [location, navigate]);
 
-  const throwPassword = (e) => {
+  const throwPassword = async (
+    e: FormEvent<HTMLFormElement>
+  ): Promise<void> => {
     e.preventDefault();
-
-    fetch(RESET_PASSWORD, {
-      method: "POST",
-      body: JSON.stringify({ password: password, token: token }),
-    })
-      .then((res) => {
-        if (res.ok) {
-          navigate("/");
-        }
-        return res.json();
-      })
-      .catch((error) => {
-        console.error(error);
+    try {
+      const response = await fetch(RESET_PASSWORD, {
+        method: "POST",
+        body: JSON.stringify({ password: password, token: token }),
       });
 
-    setPassword("");
-    setToken("");
+      if (response.ok) {
+        navigate("/");
+      }
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setPassword("");
+      setToken("");
+    }
   };
 
   return (

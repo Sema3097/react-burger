@@ -1,12 +1,17 @@
-import React from "react";
+import React, { FC } from "react";
 import { useSelector } from "react-redux";
 import { Navigate, useLocation } from "react-router-dom";
 import { getUser, getIsAuthChecked } from "../../services/safety/user";
-import PropTypes from "prop-types";
+import { IUserAuth } from "../../utils/types";
 
-const Protected = ({ onlyUnAuth = false, component }) => {
-  const user = useSelector(getUser);
-  const isAuthChecked = useSelector(getIsAuthChecked);
+interface IProtected {
+  onlyUnAuth: boolean;
+  component: React.ReactElement;
+}
+
+const Protected: FC<IProtected> = ({ onlyUnAuth = false, component }) => {
+  const user: IUserAuth | null = useSelector(getUser);
+  const isAuthChecked: boolean = useSelector(getIsAuthChecked);
   const location = useLocation();
 
   if (!isAuthChecked) {
@@ -25,12 +30,9 @@ const Protected = ({ onlyUnAuth = false, component }) => {
   return component;
 };
 
-Protected.propTypes = {
-  onlyUnAuth: PropTypes.bool,
-  component: PropTypes.element.isRequired
-};
-
-export const OnlyAuth = Protected;
-export const OnlyUnAuth = ({ component }) => (
+export const OnlyAuth: React.FC<IProtected> = ({ component }) => (
+  <Protected onlyUnAuth={false} component={component} />
+);
+export const OnlyUnAuth: React.FC<IProtected> = ({ component }) => (
   <Protected onlyUnAuth={true} component={component} />
 );

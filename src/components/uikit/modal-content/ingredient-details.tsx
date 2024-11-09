@@ -1,11 +1,14 @@
-import React from "react";
+import React, { FC } from "react";
 import styles from "./modal-content.module.css";
 import { useParams } from "react-router-dom";
-import PropTypes from "prop-types";
-import { ingredientPropType } from "../../../utils/types";
+import { Iingredient } from "../../../utils/types";
 
-const IngredientDetails = ({ ingredients }) => {
-  const { id } = useParams();
+interface IIngredientDetails {
+  ingredients: Iingredient[];
+}
+
+const IngredientDetails: FC<IIngredientDetails> = ({ ingredients }) => {
+  const { id } = useParams<Record<string, string | undefined>>();
   const ingredient = ingredients.find((elem) => elem._id === id);
 
   if (!ingredient) {
@@ -64,11 +67,6 @@ const IngredientDetails = ({ ingredients }) => {
       </div>
     </>
   );
-};
-
-IngredientDetails.propTypes = {
-  ingredients: PropTypes.arrayOf(PropTypes.shape(ingredientPropType.isRequired))
-    .isRequired,
 };
 
 export { IngredientDetails };

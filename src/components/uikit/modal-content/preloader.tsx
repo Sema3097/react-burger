@@ -1,20 +1,21 @@
-import React, { useEffect } from "react";
+import React, { FC, useEffect } from "react";
 import styles from "./preloader.module.css";
 import { useDispatch } from "react-redux";
 import { getUser, refreshToken } from "../../../utils/api";
 import { setUser } from "../../../services/safety/user";
+import { IUserAuth } from "../../../utils/types";
 
-const Preloader = () => {
+const Preloader: FC = () => {
   const dispatch = useDispatch();
 
   useEffect(() => {
-    const fetchUser = async () => {
+    const fetchUser = async (): Promise<void> => {
       if (localStorage.getItem("accessToken")) {
         try {
-          const user = await getUser();
+          const user: IUserAuth = await getUser();
           dispatch(setUser(user));
         } catch (err) {
-          if (err.message === "jwt expired") {
+          if (err instanceof Error && err.message === "jwt expired") {
             await refreshToken();
             fetchUser();
           }

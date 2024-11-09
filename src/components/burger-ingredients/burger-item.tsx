@@ -1,19 +1,28 @@
-import React from "react";
+import React, { FC } from "react";
 import styles from "./item-ingredient.module.css";
 import {
   CurrencyIcon,
   Counter,
 } from "@ya.praktikum/react-developer-burger-ui-components";
-import PropTypes from "prop-types";
-import { ingredientPropType } from "../../utils/types";
 import { useSelector } from "react-redux";
 import { useDrag } from "react-dnd";
+import { Iingredient } from "../../utils/types";
 
-const BurgerItem = ({ data }) => {
-  const burgerFilling = useSelector((state) => state.filling.burgerFilling);
-  const burgerBuns = useSelector((state) => state.filling.burgerBuns);
+interface IBurgerItem {
+  data: Iingredient;
+}
 
-  const getIngredientCount = (data) => {
+const BurgerItem: FC<IBurgerItem> = ({ data }) => {
+  const burgerFilling = useSelector(
+    (state: { filling: { burgerFilling: Iingredient[] } }) =>
+      state.filling.burgerFilling
+  );
+  const burgerBuns = useSelector(
+    (state: { filling: { burgerBuns: Iingredient[] } }) =>
+      state.filling.burgerBuns
+  );
+
+  const getIngredientCount = (data: Iingredient) => {
     if (data.type === "bun") {
       const selectedBun = burgerBuns.find((ing) => ing.type === "bun");
       return selectedBun && selectedBun.name === data.name ? 2 : 0;
@@ -33,7 +42,6 @@ const BurgerItem = ({ data }) => {
         count={getIngredientCount(data)}
         size="default"
         extraClass="m-1"
-        className={styles.counter}
       />
       <img src={data.image} alt="logo" />
       <div className={styles.main_info}>
@@ -45,10 +53,6 @@ const BurgerItem = ({ data }) => {
       </article>
     </div>
   );
-};
-
-BurgerItem.propTypes = {
-  data: PropTypes.shape(ingredientPropType.isRequired),
 };
 
 export { BurgerItem };

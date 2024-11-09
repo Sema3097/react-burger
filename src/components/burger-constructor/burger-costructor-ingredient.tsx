@@ -1,25 +1,39 @@
-import React, { useRef } from "react";
+import React, { FC, useRef } from "react";
 import { useDrag, useDrop } from "react-dnd";
 import {
   ConstructorElement,
   DragIcon,
 } from "@ya.praktikum/react-developer-burger-ui-components";
 import styles from "./burger-construction.module.css";
-import PropTypes from "prop-types";
-import { ingredientPropType } from "../../utils/types";
 import { useDispatch } from "react-redux";
 import {
   deleteFilling,
   transferIngredients,
 } from "../../services/constructor-ingredients-save";
+import { Iingredient } from "../../utils/types";
 
-const BurgerCostructorIngredient = ({ id, ingredient, index }) => {
-  const ref = useRef(null);
+interface IBurgerCostructorIngredient {
+  id: string;
+  ingredient: Iingredient;
+  index: number;
+}
+
+interface ITranstionItem {
+  id: string;
+  index: number;
+}
+
+const BurgerCostructorIngredient: FC<IBurgerCostructorIngredient> = ({
+  id,
+  ingredient,
+  index,
+}) => {
+  const ref = useRef<HTMLDivElement | null>(null);
   const dispatch = useDispatch();
-  const deleteIngredient = (uniqueid) => {
+  const deleteIngredient = (uniqueid: string) => {
     dispatch(deleteFilling(uniqueid));
   };
-  const moveIngredients = (dragIndex, hoverIndex) => {
+  const moveIngredients = (dragIndex: number, hoverIndex: number) => {
     dispatch(transferIngredients({ dragIndex, hoverIndex }));
   };
 
@@ -35,29 +49,33 @@ const BurgerCostructorIngredient = ({ id, ingredient, index }) => {
 
   const [, dropRef] = useDrop({
     accept: "ingredient",
-    hover: (item, monitor) => {
+    hover: (item: ITranstionItem, monitor) => {
       const dragIndex = item.index;
       const hoverIndex = index;
       if (dragIndex === hoverIndex) {
         return;
       }
       const hoverBoundingRect = ref.current?.getBoundingClientRect();
+      if (!hoverBoundingRect) return;
+
       const hoverMiddleY =
         (hoverBoundingRect.bottom - hoverBoundingRect.top) / 2;
       const clientOffset = monitor.getClientOffset();
-      const hoverClientY = clientOffset.y - hoverBoundingRect.top;
-      if (dragIndex < hoverIndex && hoverClientY < hoverMiddleY) {
-        return;
+      if (clientOffset) {
+        const hoverClientY = clientOffset.y - hoverBoundingRect.top;
+        if (dragIndex < hoverIndex && hoverClientY < hoverMiddleY) {
+          return;
+        }
+        if (dragIndex > hoverIndex && hoverClientY > hoverMiddleY) {
+          return;
+        }
+        moveIngredients(dragIndex, hoverIndex);
+        item.index = hoverIndex;
       }
-      if (dragIndex > hoverIndex && hoverClientY > hoverMiddleY) {
-        return;
-      }
-      moveIngredients(dragIndex, hoverIndex);
-      item.index = hoverIndex;
     },
   });
 
-  const opacity = isDragging ? 0 : 1;
+  const opacity: number = isDragging ? 0 : 1;
 
   dragRef(dropRef(ref));
 
@@ -73,16 +91,14 @@ const BurgerCostructorIngredient = ({ id, ingredient, index }) => {
         text={ingredient.name}
         price={ingredient.price}
         thumbnail={ingredient.image}
-        handleClose={() => deleteIngredient(ingredient.uniqueid)}
+        handleClose={() => {
+          if (ingredient.uniqueid) {
+            deleteIngredient(ingredient.uniqueid);
+          }
+        }}
       />
     </div>
   );
-};
-
-BurgerCostructorIngredient.propTypes = {
-  ingredient: PropTypes.shape(ingredientPropType.isRequired).isRequired,
-  id: PropTypes.string.isRequired,
-  index: PropTypes.number.isRequired,
 };
 
 export { BurgerCostructorIngredient };

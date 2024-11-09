@@ -1,4 +1,4 @@
-import React, { useState, } from "react";
+import React, { FC, useState } from "react";
 import {
   CurrencyIcon,
   Button,
@@ -22,45 +22,56 @@ import { closesModal } from "../../services/getting-and-updating-modal";
 import { useNavigate } from "react-router-dom";
 import { Preloader } from "../uikit/modal-content/preloader";
 import { refreshToken } from "../../utils/api";
+import { Iingredient, IUserAuth } from "../../utils/types";
 
-const BurgerConstructor = () => {
-  const [loading, setLoading] = useState(false);
+const BurgerConstructor: FC = () => {
+  const [loading, setLoading] = useState<boolean>(false);
+
   const [sendData, { isLoading, isError, data: responseData }] =
     useSendDataMutation();
 
   const dispatch = useDispatch();
 
-  const burgerFilling = useSelector((state) => state.filling.burgerFilling);
-  const burgerBuns = useSelector((state) => state.filling.burgerBuns);
+  const burgerFilling = useSelector(
+    (state: { filling: { burgerFilling: Iingredient[] } }) =>
+      state.filling.burgerFilling
+  );
+  const burgerBuns = useSelector(
+    (state: { filling: { burgerBuns: Iingredient[] } }) =>
+      state.filling.burgerBuns
+  );
   const isOpenModalWindow = useSelector(
-    (state) => state.updatingModal.isOpenModal
+    (state: { updatingModal: { isOpenModal: boolean } }) =>
+      state.updatingModal.isOpenModal
   );
 
-  const closeOrderDetails = () => {
-    dispatch(closesModal(false));
+  const closeOrderDetails = (): void => {
+    dispatch(closesModal());
   };
 
   const allIngredients = [
-    ...burgerBuns.map((item) => item._id),
-    ...burgerFilling.map((item) => item._id),
-    ...burgerBuns.map((item) => item._id),
+    ...burgerBuns.map((item: Iingredient) => item._id),
+    ...burgerFilling.map((item: Iingredient) => item._id),
+    ...burgerBuns.map((item: Iingredient) => item._id),
   ];
 
-  const user = useSelector((state) => state.user.user);
+  const user: IUserAuth = useSelector(
+    (state: { user: { user: IUserAuth } }) => state.user.user
+  );
 
   const navigate = useNavigate();
 
-  const openModalWindow = async () => {
+  const openModalWindow = async (): Promise<void> => {
     if (user) {
       setLoading(true);
       setTimeout(async () => {
         try {
           const dataToSend = { ingredients: allIngredients };
           await sendData(dataToSend);
-          dispatch(openModal(true));
-          dispatch(clearConstructor());
+          dispatch(openModal());
+          dispatch(clearConstructor(null));
         } catch (error) {
-          if (error.message === "jwt expired") {
+          if (error instanceof Error && error.message === "jwt expired") {
             try {
               await refreshToken();
               openModalWindow();
@@ -77,13 +88,13 @@ const BurgerConstructor = () => {
     }
   };
 
-  const deleteBurgerBuns = (uniqueid) => {
+  const deleteBurgerBuns = (uniqueid: string) => {
     dispatch(deleteBuns(uniqueid));
   };
 
   const [, dropRef] = useDrop({
     accept: "filling",
-    drop: (item) => {
+    drop: (item: Iingredient) => {
       if (item.type === "bun") {
         dispatch(addBuns(item));
       } else {
@@ -114,7 +125,11 @@ const BurgerConstructor = () => {
                 text={bun.name + "(верх)"}
                 price={bun.price}
                 thumbnail={bun.image}
-                handleClose={() => deleteBurgerBuns(bun.uniqueid)}
+                handleClose={() => {
+                  if (bun.uniqueid) {
+                    deleteBurgerBuns(bun.uniqueid);
+                  }
+                }}
               />
             ))
           )}
@@ -151,7 +166,11 @@ const BurgerConstructor = () => {
                 text={bun.name + "(низ)"}
                 price={bun.price}
                 thumbnail={bun.image}
-                handleClose={() => deleteBurgerBuns(bun.uniqueid)}
+                handleClose={() => {
+                  if (bun.uniqueid) {
+                    deleteBurgerBuns(bun.uniqueid);
+                  }
+                }}
               />
             ))
           )}

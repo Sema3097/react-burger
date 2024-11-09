@@ -1,4 +1,4 @@
-import { React, useState } from "react";
+import React, { FC, FormEvent, useState } from "react";
 import {
   EmailInput,
   PasswordInput,
@@ -6,31 +6,37 @@ import {
   Button,
 } from "@ya.praktikum/react-developer-burger-ui-components";
 import styles from "./pages.module.css";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, NavigateFunction, useNavigate } from "react-router-dom";
 import { useRegisterMutation } from "../services/safety/register-slice";
+import { IFetchResponse } from "../utils/types";
 
-const RegisterPage = () => {
-  const [name, setName] = useState("");
-  const [mail, setMail] = useState("");
-  const [password, setPassword] = useState("");
+const RegisterPage: FC = () => {
+  const [name, setName] = useState<string>("");
+  const [mail, setMail] = useState<string>("");
+  const [password, setPassword] = useState<string>("");
 
   const [register, { isLoading, isSuccess, isError }] = useRegisterMutation();
-  const navigate = useNavigate();
+  const navigate: NavigateFunction = useNavigate();
 
-  const handleRegister = async (e) => {
+  const handleRegister = async (
+    e: FormEvent<HTMLFormElement>
+  ): Promise<void> => {
     e.preventDefault();
     try {
-      const { data } = await register({
+      const response = await register({
         email: mail,
         password: password,
         name: name,
       });
-      localStorage.setItem("accessToken", data.accessToken);
-      localStorage.setItem("refreshToken", data.refreshToken);
-      setName("");
-      setMail("");
-      setPassword("");
-      navigate("/");
+      if ("data" in response) {
+        const { data } = response as { data: IFetchResponse };
+        localStorage.setItem("accessToken", data.accessToken);
+        localStorage.setItem("refreshToken", data.refreshToken);
+        setName("");
+        setMail("");
+        setPassword("");
+        navigate("/");
+      }
     } catch (error) {
       console.error(error);
     }

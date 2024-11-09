@@ -1,7 +1,7 @@
-import React from "react";
+import React, { FC } from "react";
 import styles from './pages.module.css'
 
-const OrderFeed = () => {
+const OrderFeed: FC = () => {
   return (
     <div className={styles.orderFeed_container}>
       <h1 className="text text_type_main-large">
