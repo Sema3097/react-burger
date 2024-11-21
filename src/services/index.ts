@@ -20,6 +20,8 @@ const rootReducer = combineSlices({
   user: userSlice.reducer,
 });
 
+export type RootState = ReturnType<typeof rootReducer>;
+
 export const store = configureStore({
   reducer: rootReducer,
 
@@ -32,5 +34,7 @@ export const store = configureStore({
       apiLogout.middleware
     ),
 });
+
+export type AppDispatch = typeof store.dispatch;
 
 setupListeners(store.dispatch);

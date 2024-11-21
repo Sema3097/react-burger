@@ -1,14 +1,22 @@
-import { createSlice, nanoid } from "@reduxjs/toolkit";
+import { createSlice, nanoid, PayloadAction } from "@reduxjs/toolkit";
+import { Iingredient } from "../utils/types";
+
+interface IConstructorState {
+  burgerFilling: Iingredient[];
+  burgerBuns: Iingredient[];
+}
+
+const initialState: IConstructorState = {
+  burgerFilling: [],
+  burgerBuns: [],
+};
 
 const constructorSlice = createSlice({
   name: "addIngredientsToConstructor",
-  initialState: {
-    burgerFilling: [],
-    burgerBuns: [],
-  },
+  initialState,
   reducers: {
     addFilling: {
-      prepare: (item) => {
+      prepare: (item: Omit<Iingredient, "uniqueid">) => {
         return {
           payload: {
             ...item,
@@ -16,20 +24,20 @@ const constructorSlice = createSlice({
           },
         };
       },
-      reducer: (state, action) => {
+      reducer: (state, action: PayloadAction<Iingredient>) => {
         const newItem = action.payload;
         if (newItem.type !== "bun") {
           state.burgerFilling.push(newItem);
         }
       },
     },
-    deleteFilling(state, action) {
+    deleteFilling(state, action: PayloadAction<string>) {
       state.burgerFilling = state.burgerFilling.filter(
         (item) => item.uniqueid !== action.payload
       );
     },
     addBuns: {
-      prepare: (item) => {
+      prepare: (item: Omit<Iingredient, "uniqueid">) => {
         return {
           payload: {
             ...item,
@@ -37,19 +45,22 @@ const constructorSlice = createSlice({
           },
         };
       },
-      reducer: (state, action) => {
+      reducer: (state, action: PayloadAction<Iingredient>) => {
         const newBun = action.payload;
         if (newBun.type === "bun") {
           state.burgerBuns = [newBun];
         }
       },
     },
-    deleteBuns(state, action) {
+    deleteBuns(state, action: PayloadAction<string>) {
       state.burgerBuns = state.burgerBuns.filter(
         (item) => item.uniqueid !== action.payload
       );
     },
-    transferIngredients(state, action) {
+    transferIngredients(
+      state,
+      action: PayloadAction<{ dragIndex: number; hoverIndex: number }>
+    ) {
       const { dragIndex, hoverIndex } = action.payload;
       const dragIngredient = state.burgerFilling[dragIndex];
       const updateFilling = [...state.burgerFilling];
@@ -57,7 +68,7 @@ const constructorSlice = createSlice({
       updateFilling.splice(hoverIndex, 0, dragIngredient);
       state.burgerFilling = updateFilling;
     },
-    clearConstructor(state) {
+    clearConstructor(state: IConstructorState) {
       state.burgerFilling = [];
       state.burgerBuns = [];
     },

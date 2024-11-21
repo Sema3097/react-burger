@@ -7,7 +7,7 @@ import {
 import styles from "./burger-construction.module.css";
 import { Modal } from "../uikit/modal";
 import { OrderDetails } from "../uikit/modal-content/order-details";
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector } from "react-redux";
 import { useDrop } from "react-dnd";
 import {
   addFilling,
@@ -23,6 +23,7 @@ import { useNavigate } from "react-router-dom";
 import { Preloader } from "../uikit/modal-content/preloader";
 import { refreshToken } from "../../utils/api";
 import { Iingredient, IUserAuth } from "../../utils/types";
+import { useAppDispatch, useAppSelector } from "../../services/hooks/redux";
 
 const BurgerConstructor: FC = () => {
   const [loading, setLoading] = useState<boolean>(false);
@@ -30,17 +31,17 @@ const BurgerConstructor: FC = () => {
   const [sendData, { isLoading, isError, data: responseData }] =
     useSendDataMutation();
 
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
 
-  const burgerFilling = useSelector(
+  const burgerFilling = useAppSelector(
     (state: { filling: { burgerFilling: Iingredient[] } }) =>
       state.filling.burgerFilling
   );
-  const burgerBuns = useSelector(
+  const burgerBuns = useAppSelector(
     (state: { filling: { burgerBuns: Iingredient[] } }) =>
       state.filling.burgerBuns
   );
-  const isOpenModalWindow = useSelector(
+  const isOpenModalWindow = useAppSelector(
     (state: { updatingModal: { isOpenModal: boolean } }) =>
       state.updatingModal.isOpenModal
   );
@@ -69,7 +70,7 @@ const BurgerConstructor: FC = () => {
           const dataToSend = { ingredients: allIngredients };
           await sendData(dataToSend);
           dispatch(openModal());
-          dispatch(clearConstructor(null));
+          dispatch(clearConstructor());
         } catch (error) {
           if (error instanceof Error && error.message === "jwt expired") {
             try {

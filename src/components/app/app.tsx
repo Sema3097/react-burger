@@ -14,7 +14,6 @@ import { DndProvider } from "react-dnd";
 import { HTML5Backend } from "react-dnd-html5-backend";
 import { useGetFetchQuery } from "../../services/fetch-ingredients";
 import { FC, useEffect, useState } from "react";
-import { useDispatch } from "react-redux";
 import { getUser, refreshToken } from "../../utils/api";
 import { setUser } from "../../services/safety/user";
 import { setIsAuthChecked } from "../../services/safety/user";
@@ -22,13 +21,14 @@ import { OnlyAuth, OnlyUnAuth } from "../protected/protected-route";
 import { NotFoundPages } from "../../pages/not-found-pages";
 import { OrderFeed } from "../../pages/order-feed";
 import { Iingredient } from "../../utils/types";
+import { useAppDispatch } from "../../services/hooks/redux";
 
 const App: FC = () => {
   const { data, error, isSuccess } = useGetFetchQuery(undefined);
 
-  const ingredients: Iingredient[] = data?.ingredients || [];
+  const ingredients: Iingredient[] = data || [];
   const [ingredientId, setIngredientId] = useState<string | null>(null);
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
 
   const location = useLocation();
   const state = location.state;

@@ -1,5 +1,11 @@
 import { AUTHORIZATION } from "../../utils/data";
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
+import { IFetchResponse } from "../../utils/types";
+
+interface ISendDataToServer {
+  email: string;
+  password: string;
+}
 
 const baseQuery = fetchBaseQuery({
   baseUrl: AUTHORIZATION,
@@ -16,7 +22,7 @@ export const apiAuth = createApi({
   reducerPath: "apiAuth",
   baseQuery: baseQuery,
   endpoints: (builder) => ({
-    auth: builder.mutation({
+    auth: builder.mutation<IFetchResponse, ISendDataToServer>({
       query: (credentials) => ({
         url: AUTHORIZATION,
         method: "POST",

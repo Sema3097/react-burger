@@ -1,10 +1,16 @@
 import { createSlice } from "@reduxjs/toolkit";
 
+interface IGettingAndUpdatingModal {
+  isOpenModal: boolean;
+};
+
+const initialState: IGettingAndUpdatingModal = {
+  isOpenModal: false,
+}
+
 const gettingAndUpdatingModal = createSlice({
   name: "gettingAndUpdatingModal",
-  initialState: {
-    isOpenModal: false,
-  },
+  initialState,
   reducers: {
     openModal(state) {
       state.isOpenModal = true;

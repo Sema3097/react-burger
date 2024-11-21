@@ -1,12 +1,12 @@
 import React, { FC, useEffect } from "react";
 import styles from "./preloader.module.css";
-import { useDispatch } from "react-redux";
 import { getUser, refreshToken } from "../../../utils/api";
 import { setUser } from "../../../services/safety/user";
 import { IFetchResponse } from "../../../utils/types";
+import { useAppDispatch } from "../../../services/hooks/redux";
 
 const Preloader: FC = () => {
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
 
   const token = localStorage.getItem("accessToken");
 

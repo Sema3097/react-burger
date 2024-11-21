@@ -7,14 +7,14 @@ import {
 import styles from "./pages.module.css";
 import { Link } from "react-router-dom";
 import { useAuthMutation } from "../services/safety/auth-slice";
-import { useDispatch } from "react-redux";
 import { login } from "../services/safety/user";
 import { IFetchResponse } from "../utils/types";
+import { useAppDispatch } from "../services/hooks/redux";
 
 const LoginPage: FC = () => {
   const [mail, setMail] = useState<string>("");
   const [password, setPassword] = useState<string>("");
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
 
   const [auth, { isLoading, isSuccess, isError }] = useAuthMutation();
 

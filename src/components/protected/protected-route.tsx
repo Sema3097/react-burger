@@ -1,8 +1,8 @@
 import React, { FC } from "react";
-import { useSelector } from "react-redux";
 import { Navigate, useLocation } from "react-router-dom";
 import { getUser, getIsAuthChecked } from "../../services/safety/user";
 import { IUserAuth } from "../../utils/types";
+import { useAppSelector } from "../../services/hooks/redux";
 
 interface IProtected {
   onlyUnAuth: boolean;
@@ -10,8 +10,8 @@ interface IProtected {
 }
 
 const Protected: FC<IProtected> = ({ onlyUnAuth = false, component }) => {
-  const user: IUserAuth | null = useSelector(getUser);
-  const isAuthChecked: boolean = useSelector(getIsAuthChecked);
+  const user: IUserAuth | null = useAppSelector(getUser);
+  const isAuthChecked: boolean = useAppSelector(getIsAuthChecked);
   const location = useLocation();
 
   if (!isAuthChecked) {

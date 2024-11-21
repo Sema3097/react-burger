@@ -2,12 +2,12 @@ import React, { FC } from "react";
 import styles from "./profile-styles.module.css";
 import { NavLink } from "react-router-dom";
 import { useLogoutMutation } from "../../services/safety/logout-slice";
-import { useDispatch } from "react-redux";
 import { logout } from "../../services/safety/user";
+import { useAppDispatch } from "../../services/hooks/redux";
 
 const Profile: FC = () => {
   const [handOverToken] = useLogoutMutation();
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
 
   const handleLogout = async (): Promise<void> => {
     try {

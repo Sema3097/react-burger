@@ -1,5 +1,10 @@
 import { API_INGREDIENTS } from "../utils/data";
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
+import { Iingredient } from "../utils/types";
+
+interface IUseGetFetchQueryResponse {
+  data: Iingredient[];
+}
 
 export const fetchApi = createApi({
   reducerPath: "fetch",
@@ -7,13 +12,11 @@ export const fetchApi = createApi({
     baseUrl: API_INGREDIENTS,
   }),
   endpoints: (builder) => ({
-    getFetch: builder.query({
+    getFetch: builder.query<Iingredient[], string | undefined>({
       query: (query = "") => ({
         url: query,
       }),
-      transformResponse: (response) => ({
-        ingredients: response.data,
-      }),
+      transformResponse: (response: IUseGetFetchQueryResponse) => response.data,
     }),
   }),
 });

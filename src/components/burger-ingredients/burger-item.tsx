@@ -4,20 +4,20 @@ import {
   CurrencyIcon,
   Counter,
 } from "@ya.praktikum/react-developer-burger-ui-components";
-import { useSelector } from "react-redux";
 import { useDrag } from "react-dnd";
 import { Iingredient } from "../../utils/types";
+import { useAppSelector } from "../../services/hooks/redux";
 
 interface IBurgerItem {
   data: Iingredient;
 }
 
 const BurgerItem: FC<IBurgerItem> = ({ data }) => {
-  const burgerFilling = useSelector(
+  const burgerFilling = useAppSelector(
     (state: { filling: { burgerFilling: Iingredient[] } }) =>
       state.filling.burgerFilling
   );
-  const burgerBuns = useSelector(
+  const burgerBuns = useAppSelector(
     (state: { filling: { burgerBuns: Iingredient[] } }) =>
       state.filling.burgerBuns
   );

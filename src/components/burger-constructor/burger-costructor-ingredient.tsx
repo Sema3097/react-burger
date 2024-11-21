@@ -5,12 +5,12 @@ import {
   DragIcon,
 } from "@ya.praktikum/react-developer-burger-ui-components";
 import styles from "./burger-construction.module.css";
-import { useDispatch } from "react-redux";
 import {
   deleteFilling,
   transferIngredients,
 } from "../../services/constructor-ingredients-save";
 import { Iingredient } from "../../utils/types";
+import { useAppDispatch } from "../../services/hooks/redux";
 
 interface IBurgerCostructorIngredient {
   id: string;
@@ -29,7 +29,7 @@ const BurgerCostructorIngredient: FC<IBurgerCostructorIngredient> = ({
   index,
 }) => {
   const ref = useRef<HTMLDivElement | null>(null);
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
   const deleteIngredient = (uniqueid: string) => {
     dispatch(deleteFilling(uniqueid));
   };
