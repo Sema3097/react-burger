@@ -1,5 +1,5 @@
 .container {
-    padding: 120px 380px;
+    padding: 0 380px;
     display: flex;
     justify-content: start;
     gap: 60px;
@@ -8,6 +8,7 @@
 
 .aside {
     width: 320px;
+    margin-top: 120px;
 }
 
 .profile__item {
@@ -19,6 +20,7 @@
     display: flex;
     flex-direction: column;
     gap: 24px;
+    margin-top: 100px;
 }
 
 .aside_text {

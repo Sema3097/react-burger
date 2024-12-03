@@ -59,3 +59,48 @@ export interface IResponseDataToOrderDetails {
   order: IOrderFromOrderDetails;
   success: boolean;
 }
+
+interface IIngredientsID {
+  ingredients: string;
+}
+
+export interface IOrder {
+  ingredients: IIngredientsID[];
+  _id: string;
+  status: string;
+  number: number;
+  createdAt: string;
+  updatedAt: string;
+  name: string
+}
+
+export interface IResponseWSS {
+  success: boolean;
+  orders: IOrder[];
+  total: number;
+  totalToday: number;
+}
+
+export enum WebsocketStatus {
+  CONNECTING = "CONNECTING...",
+  ONLINE = "ONLINE",
+  OFFLINE = "OFFLINE",
+}
+
+export enum WSResponseAction {
+  DATA = "data",
+  UPDATE = "update",
+}
+
+export type TData = {
+  type: WSResponseAction.DATA;
+  data: IResponseWSS;
+};
+
+export type TUpdate = {
+  type: WSResponseAction.UPDATE;
+  data: IResponseWSS;
+};
+
+export type TWSResponseActionType = TData | TUpdate;
+export type TWSResponseActionTypes = Array<TWSResponseActionType>;

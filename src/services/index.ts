@@ -8,6 +8,28 @@ import { apiRegister } from "./safety/register-slice";
 import { apiAuth } from "./safety/auth-slice";
 import { apiLogout } from "./safety/logout-slice";
 import { userSlice } from "./safety/user";
+import {
+  feedOrdersSice,
+  wsClose,
+  wsConnecting,
+  wsError,
+  wsMessage,
+  wsOpen,
+} from "./ws-feed/slice";
+import { socketMiddleware } from "./middleware/socket-middleware";
+import { wsConnect, wsDisconnect } from "./ws-feed/actions";
+import { IResponseWSS } from "../utils/types";
+import { feedOrdersProfileSice } from "./ws-feed-profile/slice";
+
+const WSOrdersMiddleware = socketMiddleware<IResponseWSS, unknown>({
+  connect: wsConnect,
+  disconnect: wsDisconnect,
+  onConnecting: wsConnecting,
+  onOpen: wsOpen,
+  onClose: wsClose,
+  onError: wsError,
+  onMessage: wsMessage,
+});
 
 const rootReducer = combineSlices({
   [fetchApi.reducerPath]: fetchApi.reducer,
@@ -18,9 +40,9 @@ const rootReducer = combineSlices({
   filling: constructorReducer,
   updatingModal: updatingModalReducer,
   user: userSlice.reducer,
+  feedOrders: feedOrdersSice.reducer,
+  feedOrdersProfile: feedOrdersProfileSice.reducer,
 });
-
-export type RootState = ReturnType<typeof rootReducer>;
 
 export const store = configureStore({
   reducer: rootReducer,
@@ -31,9 +53,12 @@ export const store = configureStore({
       apiOrder.middleware,
       apiRegister.middleware,
       apiAuth.middleware,
-      apiLogout.middleware
+      apiLogout.middleware,
+      WSOrdersMiddleware,
     ),
 });
+
+export type RootState = ReturnType<typeof rootReducer>;
 
 export type AppDispatch = typeof store.dispatch;
 

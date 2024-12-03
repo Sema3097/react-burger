@@ -1,12 +1,35 @@
-import React, { FC } from "react";
+import React, { FC, useEffect } from "react";
 import styles from "./order-styles.module.css";
+import { useAppDispatch, useAppSelector } from "../../services/hooks/redux";
+import { WSS_API_Profile } from "../../utils/data";
+import { wsConnectProfile, wsDisconnectProfile } from "../../services/ws-feed-profile/actions";
+import { getResponsesProfile } from "../../services/ws-feed-profile/slice";
+import { wsConnect, wsDisconnect } from "../../services/ws-feed/actions";
 
-const Orders: FC = () => {
+interface IOrder {
+ 
+}
+
+const FeedOrders: FC<IOrder> = () => {
+
+  const dispatch = useAppDispatch();
+
+  useEffect(() => {
+    dispatch(wsConnect(WSS_API_Profile));
+    
+    return () => {
+      dispatch(wsDisconnect());
+    };
+  }, [dispatch])
+
+  const responseWss = useAppSelector(getResponsesProfile);
+  console.log(responseWss)
+  
   return (
-    <h1 className={`${styles.title} text text_type_main-large`}>
-      Здесь будут отображаться Ваши заказы
-    </h1>
+    <div className={`${styles.title} text text_type_main-large`}>
+      
+    </div>
   );
 };
 
-export { Orders };
+export { FeedOrders };

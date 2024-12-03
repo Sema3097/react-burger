@@ -32,7 +32,7 @@ const AppHeader: FC = () => {
 
           <div className={styles.listicon}>
             <NavLink
-              to={"/order-feed"}
+              to={"/feed"}
               className={({ isActive }) =>
                 `${"text text_type_main-default"}
                 ${isActive ? styles.activeLink : styles.link}`

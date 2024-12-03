@@ -1,3 +1,6 @@
+const token = localStorage.getItem("accessToken");
+const adressToken = token?.slice(7);
+
 export const API_INGREDIENTS: string =
   "https://norma.nomoreparties.space/api/ingredients";
 
@@ -23,3 +26,8 @@ export const UPDATE_DATA_USER: string =
 
 export const UPDATE_TOKEN: string =
   "https://norma.nomoreparties.space/api/auth/token";
+
+export const WSS_API: string = "wss://norma.nomoreparties.space/orders/all";
+
+export const WSS_API_Profile: string = `wss://norma.nomoreparties.space/orders?token=${adressToken}`;
+

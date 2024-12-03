@@ -31,7 +31,7 @@ const Modal: FC<IModal> = ({ children, title, closeOrderDetails, loading }) => {
     if (closeOrderDetails) {
       closeOrderDetails();
     } else {
-      navigate("/");
+      navigate(-1);
     }
   };
 
