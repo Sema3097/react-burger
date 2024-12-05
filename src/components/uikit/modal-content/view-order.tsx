@@ -1,11 +1,15 @@
-import React, { FC } from "react";
+import React, { FC, useEffect, useState } from "react";
 import styles from "./view-order.module.css";
 import { Iingredient, IOrder } from "../../../utils/types";
 import {
   CurrencyIcon,
   FormattedDate,
 } from "@ya.praktikum/react-developer-burger-ui-components";
-import { useLocation } from "react-router-dom";
+import { useLocation, useParams } from "react-router-dom";
+import { useAppDispatch, useAppSelector } from "../../../services/hooks/redux";
+import { wsConnect, wsDisconnect } from "../../../services/ws-feed/actions";
+import { WSS_API, WSS_API_Profile } from "../../../utils/data";
+import { wsConnectProfile, wsDisconnectProfile } from "../../../services/ws-feed-profile/actions";
 
 interface IViewOrder {
   ingredients: Iingredient[];
@@ -18,10 +22,66 @@ interface IingredientWithCount extends Iingredient {
 }
 
 const ViewOrder: FC<IViewOrder> = () => {
+  const [data, setData] = useState<any>(null);
+  const [error, setError] = useState<string>("");
+  const [isLoading, setIsLoading] = useState<boolean>(true);
+  const dispatch = useAppDispatch();
+
+  useEffect(() => {
+    dispatch(wsConnect(WSS_API));
+    dispatch(wsConnectProfile(WSS_API_Profile))
+    if (!order) {
+      fetchData();
+    }
+    return () => {
+      dispatch(wsDisconnectProfile());
+      dispatch(wsDisconnect());
+    }
+  }, [dispatch]);
+
+  const { number } = useParams();
   const { state } = useLocation();
+
   const ingredients = state?.state.ingredients || [];
   const ordersWss: IOrder[] = state?.state.ordersWss || [];
-  const orderNumber: number = state?.state.orderNumber;
+  const orderNumber = state?.state.orderNumber;
+
+  const order = useAppSelector((state) => {
+    if (number) {
+      let order = state.feedOrders?.response?.orders.find(
+        (item) => item.number === +number
+      );
+      if (order) {
+        return order;
+      }
+
+      order = state.feedOrdersProfile?.responseProfile?.orders.find(
+        (item) => item.number === +number
+      );
+      if (order) {
+        return order;
+      }
+    }
+  });
+
+  console.log(order)
+
+  const fetchData = async () => {
+    try {
+      const response = await fetch(
+        `https://norma.nomoreparties.space/api/orders/${number}`
+      );
+      if (!response.ok) {
+        throw new Error("Ошибка при загрузке данных");
+      }
+      const result = await response.json();
+      setData(result);
+    } catch (error) {
+      setError((error as Error).message);
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   const currentOrder: IOrder | undefined = ordersWss.find(
     (item) => item.number === orderNumber
@@ -59,17 +119,13 @@ const ViewOrder: FC<IViewOrder> = () => {
       );
     } else if (order.status === "created") {
       return (
-        <p
-          className={`${styles.ViewOrder__status} text text_type_main-medium`}
-        >
+        <p className={`${styles.ViewOrder__status} text text_type_main-medium`}>
           Создан
         </p>
       );
     } else if (order.status === "pending") {
       return (
-        <p
-          className={`${styles.ViewOrder__status} text text_type_main-medium`}
-        >
+        <p className={`${styles.ViewOrder__status} text text_type_main-medium`}>
           Готовится
         </p>
       );

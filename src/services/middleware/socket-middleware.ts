@@ -19,83 +19,110 @@ export type WSActions<R, S> = {
 const RECONNECT_PERIOD = 3000;
 
 export const socketMiddleware = <R, S>(
-  wsActions: WSActions<R, S>,
+  wsActionsMap: Record<string, WSActions<R, S>>,
   withTokenRefresh: boolean = false
 ): Middleware<NonNullable<unknown>, RootState> => {
   return (store) => {
-    let socket: WebSocket | null = null;
-    let url = "";
-    let isConnected = false;
-    let reconnectTimer = 0;
-
-    const {
-      connect,
-      disconnect,
-      onConnecting,
-      onOpen,
-      onClose,
-      onError,
-      onMessage,
-    } = wsActions;
+    const sockets: Record<string, WebSocket | null> = {}; 
+    const urls: Record<string, string> = {}; 
+    const isConnected: Record<string, boolean> = {}; 
+    const reconnectTimers: Record<string, number> = {};
 
     return (next) => (action) => {
       const { dispatch } = store;
+
+      const wsActionsEntry = Object.entries(wsActionsMap).find(([_, actions]) =>
+        [actions.connect, actions.disconnect].some((ac) => ac.match(action))
+      );
+
+      if (!wsActionsEntry) {
+        return next(action);
+      }
+
+      const [connectionId, wsActions] = wsActionsEntry;
+      const {
+        connect,
+        disconnect,
+        onConnecting,
+        onOpen,
+        onClose,
+        onError,
+        onMessage,
+      } = wsActions;
+
       if (connect.match(action)) {
-        socket = new WebSocket(action.payload);
-        url = action.payload;
-        isConnected = true;
-        onConnecting && dispatch(onConnecting());
-        socket.onopen = () => {
-          onOpen && dispatch(onOpen());
-        };
-        socket.onerror = () => {
-          dispatch(onError("Error"));
-        };
-        socket.onmessage = (event) => {
-          const { data } = event;
-          try {
-            const parsedData = JSON.parse(data);
-            if (
-              withTokenRefresh &&
-              parsedData.message === "Invalid or missing token"
-            ) {
-              refreshToken()
-                .then((refreshData) => {
-                  const wssUrl = new URL(url);
-                  wssUrl.searchParams.set(
-                    "token",
-                    refreshData.accessToken.replace("Bearer ", "")
-                  );
-                  dispatch(connect(wssUrl.toString()));
-                })
-                .catch((err) => {
-                  dispatch(onError((err as Error).message));
-                });
-              dispatch(disconnect());
-              return;
+        const url = action.payload;
+
+        if (!sockets[connectionId]) {
+          sockets[connectionId] = new WebSocket(url);
+          urls[connectionId] = url;
+          isConnected[connectionId] = true;
+
+          onConnecting && dispatch(onConnecting());
+
+          const socket = sockets[connectionId]!;
+
+          socket.onopen = () => {
+            onOpen && dispatch(onOpen());
+          };
+
+          socket.onerror = () => {
+            dispatch(onError("Error"));
+          };
+
+          socket.onmessage = (event) => {
+            const { data } = event;
+            try {
+              const parsedData = JSON.parse(data);
+
+              if (
+                withTokenRefresh &&
+                parsedData.message === "Invalid or missing token"
+              ) {
+                refreshToken()
+                  .then((refreshData) => {
+                    const wssUrl = new URL(urls[connectionId]);
+                    wssUrl.searchParams.set(
+                      "token",
+                      refreshData.accessToken.replace("Bearer ", "")
+                    );
+                    dispatch(connect(wssUrl.toString()));
+                  })
+                  .catch((err) => {
+                    dispatch(onError((err as Error).message));
+                  });
+                dispatch(disconnect());
+                return;
+              }
+
+              dispatch(onMessage(parsedData));
+            } catch (err) {
+              dispatch(onError((err as Error).message));
             }
-            dispatch(onMessage(parsedData));
-          } catch (err) {
-            dispatch(onError((err as Error).message));
-          }
-        };
-        socket.onclose = () => {
-          onClose && dispatch(onClose());
-          if (isConnected) {
-            reconnectTimer = window.setTimeout(() => {
-              dispatch(connect(url));
-            }, RECONNECT_PERIOD);
-          }
-        };
+          };
+
+          socket.onclose = () => {
+            onClose && dispatch(onClose());
+            if (isConnected[connectionId]) {
+              reconnectTimers[connectionId] = window.setTimeout(() => {
+                dispatch(connect(urls[connectionId]));
+              }, RECONNECT_PERIOD);
+            }
+          };
+        }
       }
-      if (socket && disconnect.match(action)) {
-        clearTimeout(reconnectTimer);
-        isConnected = false;
-        reconnectTimer = 0;
-        socket.close();
-        socket = null;
+
+      if (disconnect.match(action)) {
+        clearTimeout(reconnectTimers[connectionId]);
+        isConnected[connectionId] = false;
+
+        if (sockets[connectionId]) {
+          sockets[connectionId]!.close();
+          sockets[connectionId] = null;
+        }
       }
-      next(action);
+
+      return next(action);
     };
   };
 };

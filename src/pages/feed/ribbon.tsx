@@ -10,7 +10,6 @@ interface IRibbon {
 }
 
 const Ribbon: FC<IRibbon> = ({ ingredients, ordersWss }) => {
-
   const feedItemIngredients = ordersWss.map((order) => {
     return order.ingredients
       .map((orderIngredientId) =>
@@ -29,7 +28,7 @@ const Ribbon: FC<IRibbon> = ({ ingredients, ordersWss }) => {
     <section className={styles.orders}>
       {ordersWss.map((item, index) => (
         <FeedItem
-        ordersWss={ordersWss}
+          ordersWss={ordersWss}
           key={item._id}
           item={item}
           ingredients={feedItemIngredients[index]}

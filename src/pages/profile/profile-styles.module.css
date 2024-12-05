@@ -1,9 +1,7 @@
 .container {
-    padding: 0 380px;
     display: flex;
-    justify-content: start;
     gap: 60px;
-    align-items: start;
+    justify-content: center;
 }
 
 .aside {

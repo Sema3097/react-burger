@@ -1,4 +1,162 @@
-.title {
-    text-align: center;
-    margin-top: 50px;
+.orders {
+  margin-top: 40px;
+  overflow: auto;
+  height: 80vh;
+}
+
+.feed_item__container {
+  background-color: #1c1c21;
+  width: 850px;
+  border-radius: 50px;
+  box-sizing: border-box;
+  padding: 10px 30px;
+  margin-bottom: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.times {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.feed_item__header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.carousel_container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+}
+
+.images_wrapper {
+  display: flex;
+  position: relative;
+  left: -40px;
+  padding: 5px;
+}
+
+.image_container {
+  position: relative;
+  z-index: 1;
+  width: 80px;
+  height: 80px;
+  object-fit: cover;
+}
+
+.image_container::before {
+  content: "";
+  position: absolute;
+  top: -5px;
+  left: 25px;
+  width: 100%;
+  height: 100%;
+  border: 5px solid transparent;
+  box-sizing: border-box;
+  background: linear-gradient(#1c1c21, #1c1c21) padding-box,
+    linear-gradient(45deg, #801ab2, #4c4cff);
+  border-radius: 50%;
+  padding: 1em;
+}
+
+.image {
+  position: relative;
+  width: 130px;
+  height: auto;
+  display: block;
+  object-fit: cover;
+  margin-right: -20px;
+  z-index: 1;
+}
+
+.image_container + .image_container {
+  margin-left: -20px;
+}
+
+.images_wrapper > .image_container:nth-child(1) {
+  z-index: 6;
+}
+
+.images_wrapper > .image_container:nth-child(2) {
+  z-index: 5;
+}
+
+.images_wrapper > .image_container:nth-child(3) {
+  z-index: 4;
+}
+
+.images_wrapper > .image_container:nth-child(4) {
+  z-index: 3;
+}
+
+.images_wrapper > .image_container:nth-child(5) {
+  z-index: 2;
+}
+
+.images_wrapper > .image_container:nth-child(6) {
+  z-index: 1;
+}
+
+.hidden_images {
+  position: absolute;
+  top: 40px;
+  left: 93%;
+  transform: translate(-50%, -50%);
+  background-color: rgba(0, 0, 0, 0, 6);
+  color: white;
+  padding: 5px 10px;
+  border-radius: 5px;
+  z-index: 2;
+  font-size: 30px;
+}
+
+.feed_items__footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.info {
+  padding: 0 20px;
+  margin-left: 50px;
+}
+
+.orders_numbers {
+  display: flex;
+  gap: 150px;
+  margin-bottom: 50px;
+}
+
+.finished_orders {
+  color: rgb(0, 217, 255);
+}
+
+.finished_orders,
+.orders_in_progress {
+  margin-top: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.total_orders {
+  margin-bottom: 50px;
+}
+
+.total_numbers {
+  text-shadow: #3333ff 1px 0 20px;
+}
+
+.ViewOrder__status {
+  margin: 0;
+}
+
+.ViewOrder__status_done {
+  margin-top: 0;
 }

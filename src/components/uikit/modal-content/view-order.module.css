@@ -26,7 +26,7 @@
 
 .allIngredients {
   overflow: auto;
-  height: 40vh;
+  max-height: 40vh;
 }
 
 .ViewOrder__ingredients {

@@ -70,6 +70,18 @@ const App: FC = () => {
   return (
     <DndProvider backend={HTML5Backend}>
       <div>
+        {state?.backgroundLocationOrderProfile && (
+          <Routes location={state.backgroundLocation}>
+            <Route
+              path="/profile/orders/:number"
+              element={
+                <Modal>
+                  <ViewOrder ingredients={ingredients} />
+                </Modal>
+              }
+            />
+          </Routes>
+        )}
         {state?.backgroundLocationOrder && (
           <Routes location={state.backgroundLocation}>
             <Route
@@ -116,10 +128,18 @@ const App: FC = () => {
                 <OnlyAuth onlyUnAuth={false} component={<LayoutProfile />} />
               }
             >
+              <Route
+                path="/profile/orders/:number"
+                element={
+                  <Modal>
+                    <ViewOrder ingredients={ingredients} />
+                  </Modal>
+                }
+              />
               <Route index element={<ChangeDataForm />} />
               <Route
                 path="orders"
-                element={<FeedOrders />}
+                element={<FeedOrders ingredients={ingredients} />}
               />
             </Route>
             <Route

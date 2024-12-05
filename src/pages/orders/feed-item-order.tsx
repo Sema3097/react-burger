@@ -1,35 +1,40 @@
 import React, { FC } from "react";
+import { Iingredient, IOrder } from "../../utils/types";
 import {
   FormattedDate,
   CurrencyIcon,
 } from "@ya.praktikum/react-developer-burger-ui-components";
-import { Iingredient, IOrder } from "../../utils/types";
-import styles from "./feed.module.css";
+import styles from "./order-styles.module.css";
 import { useLocation, useNavigate } from "react-router-dom";
 
-interface IFeedItem {
-  ingredients: Iingredient[];
-  item: IOrder;
+interface IFeedItemOrder {
   ordersWss: IOrder[];
+  item: IOrder;
+  ingredients: Iingredient[];
 }
 
-const FeedItem: FC<IFeedItem> = ({ ingredients, item, ordersWss }) => {
+const FeedItemOrder: FC<IFeedItemOrder> = ({
+  ordersWss,
+  item,
+  ingredients,
+}) => {
+
   const navigate = useNavigate();
   const location = useLocation();
 
-
   const handleOrderClick = (orderNumber: number) => {
-    const backgroundLocation = {
-      ...location,
-      state: {
-        backgroundLocationOrder: location,
+    const backgroundLocation = { 
+      ...location, 
+      state: { 
+        backgroundLocationOrderProfile: location,
         ingredients: ingredients,
         ordersWss: ordersWss,
         orderNumber: orderNumber,
-      },
+      }
     };
-    navigate(`/feed/${orderNumber}`, { state: backgroundLocation });
+    navigate(`/profile/orders/${orderNumber}`, { state: backgroundLocation });
   };
+
 
   const visibleIngredients = ingredients.slice(0, 6);
   const hiddenImagesCount = ingredients.length - visibleIngredients.length;
@@ -39,10 +44,39 @@ const FeedItem: FC<IFeedItem> = ({ ingredients, item, ordersWss }) => {
     0
   );
 
+  const currentOrder: IOrder | undefined = ordersWss.find(
+    (item) => item.status
+  );
+
+  const renderStatus = (order: IOrder | undefined) => {
+    if (!order) return null;
+    if (order.status === "done") {
+      return (
+        <p
+          className={`${styles.ViewOrder__status_done} text text_type_main-default`}
+        >
+          Выполнен
+        </p>
+      );
+    } else if (order.status === "created") {
+      return (
+        <p className={`${styles.ViewOrder__status} text text_type_main-default`}>
+          Создан
+        </p>
+      );
+    } else if (order.status === "pending") {
+      return (
+        <p className={`${styles.ViewOrder__status} text text_type_main-default`}>
+          Готовится
+        </p>
+      );
+    }
+  };
+
   return (
     <section
       className={styles.feed_item__container}
-      onClick={() => handleOrderClick(item.number)}
+        onClick={() => handleOrderClick(item.number)}
     >
       <div className={styles.feed_item__header}>
         <p className="text text_type_digits-default">#{item.number}</p>
@@ -57,6 +91,7 @@ const FeedItem: FC<IFeedItem> = ({ ingredients, item, ordersWss }) => {
         </div>
       </div>
       <h3 className="text text_type_main-medium">{item.name}</h3>
+      <div>{renderStatus(currentOrder)}</div>
       <div className={styles.feed_items__footer}>
         <div className={styles.carousel_container}>
           <div className={styles.images_wrapper}>
@@ -82,4 +117,4 @@ const FeedItem: FC<IFeedItem> = ({ ingredients, item, ordersWss }) => {
   );
 };
 
-export { FeedItem };
+export { FeedItemOrder };

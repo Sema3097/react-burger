@@ -19,16 +19,28 @@ import {
 import { socketMiddleware } from "./middleware/socket-middleware";
 import { wsConnect, wsDisconnect } from "./ws-feed/actions";
 import { IResponseWSS } from "../utils/types";
-import { feedOrdersProfileSice } from "./ws-feed-profile/slice";
+import { feedOrdersProfileSice, wsCloseProfile, wsConnectingProfile, wsErrorProfile, wsMessageProfile, wsOpenProfile } from "./ws-feed-profile/slice";
+import { wsConnectProfile, wsDisconnectProfile } from "./ws-feed-profile/actions";
 
 const WSOrdersMiddleware = socketMiddleware<IResponseWSS, unknown>({
-  connect: wsConnect,
-  disconnect: wsDisconnect,
-  onConnecting: wsConnecting,
-  onOpen: wsOpen,
-  onClose: wsClose,
-  onError: wsError,
-  onMessage: wsMessage,
+  feedOrders: {
+    connect: wsConnect,
+    disconnect: wsDisconnect,
+    onConnecting: wsConnecting,
+    onOpen: wsOpen,
+    onClose: wsClose,
+    onError: wsError,
+    onMessage: wsMessage,
+  },
+  feedOrdersProfile: {
+    connect: wsConnectProfile,
+    disconnect: wsDisconnectProfile,
+    onConnecting: wsConnectingProfile,
+    onOpen: wsOpenProfile,
+    onClose: wsCloseProfile,
+    onError: wsErrorProfile,
+    onMessage: wsMessageProfile,
+  },
 });
 
 const rootReducer = combineSlices({
