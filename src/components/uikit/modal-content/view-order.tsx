@@ -5,11 +5,14 @@ import {
   CurrencyIcon,
   FormattedDate,
 } from "@ya.praktikum/react-developer-burger-ui-components";
-import { useLocation, useParams } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import { useAppDispatch, useAppSelector } from "../../../services/hooks/redux";
 import { wsConnect, wsDisconnect } from "../../../services/ws-feed/actions";
-import { WSS_API, WSS_API_Profile } from "../../../utils/data";
-import { wsConnectProfile, wsDisconnectProfile } from "../../../services/ws-feed-profile/actions";
+import { ORDER_ADRESS, WSS_API, WSS_API_Profile } from "../../../utils/data";
+import {
+  wsConnectProfile,
+  wsDisconnectProfile,
+} from "../../../services/ws-feed-profile/actions";
 
 interface IViewOrder {
   ingredients: Iingredient[];
@@ -21,32 +24,25 @@ interface IingredientWithCount extends Iingredient {
   count: number;
 }
 
-const ViewOrder: FC<IViewOrder> = () => {
+const ViewOrder: FC<IViewOrder> = ({ ingredients }) => {
   const [data, setData] = useState<any>(null);
-  const [error, setError] = useState<string>("");
-  const [isLoading, setIsLoading] = useState<boolean>(true);
   const dispatch = useAppDispatch();
 
   useEffect(() => {
     dispatch(wsConnect(WSS_API));
-    dispatch(wsConnectProfile(WSS_API_Profile))
+    dispatch(wsConnectProfile(WSS_API_Profile));
     if (!order) {
       fetchData();
     }
     return () => {
       dispatch(wsDisconnectProfile());
       dispatch(wsDisconnect());
-    }
+    };
   }, [dispatch]);
 
   const { number } = useParams();
-  const { state } = useLocation();
 
-  const ingredients = state?.state.ingredients || [];
-  const ordersWss: IOrder[] = state?.state.ordersWss || [];
-  const orderNumber = state?.state.orderNumber;
-
-  const order = useAppSelector((state) => {
+  let order = useAppSelector((state) => {
     if (number) {
       let order = state.feedOrders?.response?.orders.find(
         (item) => item.number === +number
@@ -64,40 +60,48 @@ const ViewOrder: FC<IViewOrder> = () => {
     }
   });
 
-  console.log(order)
-
   const fetchData = async () => {
     try {
-      const response = await fetch(
-        `https://norma.nomoreparties.space/api/orders/${number}`
-      );
+      const response = await fetch(ORDER_ADRESS + number);
       if (!response.ok) {
         throw new Error("Ошибка при загрузке данных");
       }
       const result = await response.json();
       setData(result);
     } catch (error) {
-      setError((error as Error).message);
-    } finally {
-      setIsLoading(false);
+      console.log((error as Error).message);
     }
   };
 
-  const currentOrder: IOrder | undefined = ordersWss.find(
-    (item) => item.number === orderNumber
-  );
+  if (!order && data) {
+    order = data.orders[0];
+  }
 
-  const totalPrice = ingredients.reduce(
-    (acc: number, item: Iingredient) => acc + item.price,
+  const matchedIngredients = (order?.ingredients ?? [])
+    .map((orderIngredientId) => {
+      const ingredient = ingredients.find(
+        (item) => item._id === String(orderIngredientId)
+      );
+      return ingredient || null;
+    })
+    .filter((ingredient): ingredient is Iingredient => ingredient !== null);
+
+  const totalPrice = matchedIngredients.reduce(
+    (acc, item) => acc + item.price,
     0
   );
 
-  const ingredientCounts = ingredients.reduce(
-    (acc: Record<string, IingredientWithCount>, item: Iingredient) => {
-      if (acc[item._id]) {
-        acc[item._id].count += 1;
-      } else {
-        acc[item._id] = { ...item, count: 1 };
+  const ingredientCounts = (order?.ingredients ?? []).reduce(
+    (acc: Record<string, IingredientWithCount>, orderIngredientId) => {
+      const ingredient = ingredients.find(
+        (item) => item._id === String(orderIngredientId)
+      );
+      if (ingredient) {
+        if (acc[ingredient._id]) {
+          acc[ingredient._id].count += 1;
+        } else {
+          acc[ingredient._id] = { ...ingredient, count: 1 };
+        }
       }
       return acc;
     },
@@ -134,19 +138,17 @@ const ViewOrder: FC<IViewOrder> = () => {
 
   return (
     <section className={styles.ViewOrder__container}>
-      {currentOrder && (
-        <div>
-          <p
-            className={`${styles.ViewOrder__number} text text_type_digits-medium`}
-          >
-            #{currentOrder.number}
-          </p>
-          <p className={`${styles.ViewOrder__name} text text_type_main-large`}>
-            {currentOrder.name}
-          </p>
-        </div>
-      )}
-      {renderStatus(currentOrder)}
+      <div>
+        <p
+          className={`${styles.ViewOrder__number} text text_type_digits-medium`}
+        >
+          #{number}
+        </p>
+        <p className={`${styles.ViewOrder__name} text text_type_main-large`}>
+          {order?.name}
+        </p>
+      </div>
+      {renderStatus(order)}
       <p className="text text_type_main-large">Состав:</p>
       <div className={styles.allIngredients}>
         {uniqueIngredients.map((item) => (
@@ -161,11 +163,11 @@ const ViewOrder: FC<IViewOrder> = () => {
           </div>
         ))}
       </div>
-      {currentOrder && (
+      {order && (
         <div className={styles.view_order__container_footer}>
           <div className={styles.view_order__footer}>
             <FormattedDate
-              date={new Date(currentOrder.createdAt)}
+              date={new Date(order.createdAt)}
               className="text_type_main-medium text_color_inactive"
             />
             <p

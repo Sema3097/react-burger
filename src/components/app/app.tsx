@@ -13,40 +13,35 @@ import { IngredientDetails } from "../uikit/modal-content/ingredient-details";
 import { DndProvider } from "react-dnd";
 import { HTML5Backend } from "react-dnd-html5-backend";
 import { useGetFetchQuery } from "../../services/fetch-ingredients";
-import { FC, useEffect, useState } from "react";
+import { useEffect, useState, FC } from "react";
 import { getUser, refreshToken } from "../../utils/api";
-import { setUser } from "../../services/safety/user";
-import { setIsAuthChecked } from "../../services/safety/user";
+import { setUser, setIsAuthChecked } from "../../services/safety/user";
 import { OnlyAuth, OnlyUnAuth } from "../protected/protected-route";
 import { NotFoundPages } from "../../pages/not-found-pages";
 import { Feed } from "../../pages/feed/feed";
-import { Iingredient } from "../../utils/types";
-import { useAppDispatch } from "../../services/hooks/redux";
 import { ViewOrder } from "../uikit/modal-content/view-order";
+import { useAppDispatch } from "../../services/hooks/redux";
+import { Iingredient } from "../../utils/types";
 
 const App: FC = () => {
   const { data, error, isSuccess } = useGetFetchQuery(undefined);
-
   const ingredients: Iingredient[] = data || [];
   const [ingredientId, setIngredientId] = useState<string | null>(null);
   const dispatch = useAppDispatch();
 
   const location = useLocation();
-  const state = location.state;
+  const state = location.state as { backgroundLocation?: Location };
 
   useEffect(() => {
-    const fetchUser = async (): Promise<void> => {
+    const fetchUser = async () => {
       if (localStorage.getItem("accessToken")) {
         try {
           const user = await getUser();
           dispatch(setUser(user));
         } catch (err) {
-          if (typeof err === "object" && err !== null && "message" in err) {
-            const errorMessage = (err as { message: string }).message;
-            if (errorMessage === "jwt expired") {
-              await refreshToken();
-              fetchUser();
-            }
+          if ((err as any)?.message === "jwt expired") {
+            await refreshToken();
+            await fetchUser();
           }
         } finally {
           dispatch(setIsAuthChecked(true));
@@ -54,36 +49,27 @@ const App: FC = () => {
       } else {
         dispatch(setIsAuthChecked(true));
       }
-      const ingredientIdFromUrl: string | undefined = location.pathname
-        .split("/")
-        .pop();
-      if (ingredientIdFromUrl) {
-        setIngredientId(ingredientIdFromUrl);
-      }
     };
 
     fetchUser();
-  }, [location, dispatch]);
+  }, [dispatch]);
 
   if (error) return <h1>{JSON.stringify(error)}</h1>;
   if (!isSuccess) return <h1>Загрузка...</h1>;
+
   return (
     <DndProvider backend={HTML5Backend}>
       <div>
-        {state?.backgroundLocationOrderProfile && (
-          <Routes location={state.backgroundLocation}>
+        {state?.backgroundLocation && (
+          <Routes>
             <Route
-              path="/profile/orders/:number"
+              path="/ingredients/:id"
               element={
-                <Modal>
-                  <ViewOrder ingredients={ingredients} />
+                <Modal title="Детали ингредиента">
+                  <IngredientDetails ingredients={ingredients} />
                 </Modal>
               }
             />
-          </Routes>
-        )}
-        {state?.backgroundLocationOrder && (
-          <Routes location={state.backgroundLocation}>
             <Route
               path="/feed/:number"
               element={
@@ -92,15 +78,11 @@ const App: FC = () => {
                 </Modal>
               }
             />
-          </Routes>
-        )}
-        {state?.backgroundLocation && ingredientId && (
-          <Routes>
             <Route
-              path="/ingredients/:id"
+              path="/profile/orders/:number"
               element={
-                <Modal title="Детали ингредиента">
-                  <IngredientDetails ingredients={ingredients} />
+                <Modal>
+                  <ViewOrder ingredients={ingredients} />
                 </Modal>
               }
             />
@@ -112,11 +94,7 @@ const App: FC = () => {
             <Route path="/feed" element={<Feed ingredients={ingredients} />} />
             <Route
               path="/feed/:number"
-              element={
-                <Modal>
-                  <ViewOrder ingredients={ingredients} />
-                </Modal>
-              }
+              element={<ViewOrder ingredients={ingredients} />}
             />
             <Route
               path="/ingredients/:id"
@@ -130,11 +108,7 @@ const App: FC = () => {
             >
               <Route
                 path="/profile/orders/:number"
-                element={
-                  <Modal>
-                    <ViewOrder ingredients={ingredients} />
-                  </Modal>
-                }
+                element={<ViewOrder ingredients={ingredients} />}
               />
               <Route index element={<ChangeDataForm />} />
               <Route
@@ -166,7 +140,6 @@ const App: FC = () => {
                 <OnlyUnAuth onlyUnAuth={true} component={<ForgotPassword />} />
               }
             />
-
             <Route path="*" element={<NotFoundPages />} />
           </Route>
         </Routes>

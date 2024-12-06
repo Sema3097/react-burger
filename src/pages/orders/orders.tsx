@@ -28,7 +28,7 @@ const FeedOrders: FC<IFeedOrder> = ({ingredients}) => {
 
   const ordersWss = responseWss.orders;
 
-  const feedItemIngredients = ordersWss.map((order) => {
+  const feedItemIngredients = ordersWss?.map((order) => {
     return order.ingredients
       .map((orderIngredientId) =>
         ingredients.find(
@@ -46,7 +46,7 @@ const FeedOrders: FC<IFeedOrder> = ({ingredients}) => {
   return (
     <div className={`${styles.title} text text_type_main-large`}>
       <section className={styles.orders}>
-      {ordersWss.map((item, index) => (
+      {ordersWss?.map((item, index) => (
         <FeedItemOrder
           ordersWss={ordersWss}
           key={item._id}

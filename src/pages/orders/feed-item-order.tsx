@@ -5,7 +5,7 @@ import {
   CurrencyIcon,
 } from "@ya.praktikum/react-developer-burger-ui-components";
 import styles from "./order-styles.module.css";
-import { useLocation, useNavigate } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 
 interface IFeedItemOrder {
   ordersWss: IOrder[];
@@ -18,23 +18,9 @@ const FeedItemOrder: FC<IFeedItemOrder> = ({
   item,
   ingredients,
 }) => {
-
-  const navigate = useNavigate();
   const location = useLocation();
 
-  const handleOrderClick = (orderNumber: number) => {
-    const backgroundLocation = { 
-      ...location, 
-      state: { 
-        backgroundLocationOrderProfile: location,
-        ingredients: ingredients,
-        ordersWss: ordersWss,
-        orderNumber: orderNumber,
-      }
-    };
-    navigate(`/profile/orders/${orderNumber}`, { state: backgroundLocation });
-  };
-
+  const orderLink = `/profile/orders/${item.number}`;
 
   const visibleIngredients = ingredients.slice(0, 6);
   const hiddenImagesCount = ingredients.length - visibleIngredients.length;
@@ -45,7 +31,7 @@ const FeedItemOrder: FC<IFeedItemOrder> = ({
   );
 
   const currentOrder: IOrder | undefined = ordersWss.find(
-    (item) => item.status
+    (order) => order.status
   );
 
   const renderStatus = (order: IOrder | undefined) => {
@@ -60,13 +46,17 @@ const FeedItemOrder: FC<IFeedItemOrder> = ({
       );
     } else if (order.status === "created") {
       return (
-        <p className={`${styles.ViewOrder__status} text text_type_main-default`}>
+        <p
+          className={`${styles.ViewOrder__status} text text_type_main-default`}
+        >
           Создан
         </p>
       );
     } else if (order.status === "pending") {
       return (
-        <p className={`${styles.ViewOrder__status} text text_type_main-default`}>
+        <p
+          className={`${styles.ViewOrder__status} text text_type_main-default`}
+        >
           Готовится
         </p>
       );
@@ -74,9 +64,10 @@ const FeedItemOrder: FC<IFeedItemOrder> = ({
   };
 
   return (
-    <section
+    <Link
+      to={orderLink} 
+      state={{backgroundLocation: location}} 
       className={styles.feed_item__container}
-        onClick={() => handleOrderClick(item.number)}
     >
       <div className={styles.feed_item__header}>
         <p className="text text_type_digits-default">#{item.number}</p>
@@ -95,9 +86,9 @@ const FeedItemOrder: FC<IFeedItemOrder> = ({
       <div className={styles.feed_items__footer}>
         <div className={styles.carousel_container}>
           <div className={styles.images_wrapper}>
-            {visibleIngredients.map((item) => (
-              <div key={item.uniqueid} className={styles.image_container}>
-                <img src={item.image} alt="logo" className={styles.image} />
+            {visibleIngredients.map((ingredient) => (
+              <div key={ingredient.uniqueid} className={styles.image_container}>
+                <img src={ingredient.image} alt="logo" className={styles.image} />
               </div>
             ))}
             {hiddenImagesCount > 0 && (
@@ -113,7 +104,7 @@ const FeedItemOrder: FC<IFeedItemOrder> = ({
           {totalPrice} <CurrencyIcon type="primary" />
         </p>
       </div>
-    </section>
+    </Link>
   );
 };
 

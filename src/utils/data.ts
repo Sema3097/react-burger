@@ -31,4 +31,6 @@ export const WSS_API: string = "wss://norma.nomoreparties.space/orders/all";
 
 export const WSS_API_Profile: string = `wss://norma.nomoreparties.space/orders?token=${adressToken}`;
 
+export const ORDER_ADRESS: string = 'https://norma.nomoreparties.space/api/orders/';
+
 

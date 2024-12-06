@@ -1,11 +1,8 @@
 import React, { FC } from "react";
-import {
-  FormattedDate,
-  CurrencyIcon,
-} from "@ya.praktikum/react-developer-burger-ui-components";
+import { FormattedDate, CurrencyIcon } from "@ya.praktikum/react-developer-burger-ui-components";
 import { Iingredient, IOrder } from "../../utils/types";
 import styles from "./feed.module.css";
-import { useLocation, useNavigate } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 
 interface IFeedItem {
   ingredients: Iingredient[];
@@ -14,22 +11,9 @@ interface IFeedItem {
 }
 
 const FeedItem: FC<IFeedItem> = ({ ingredients, item, ordersWss }) => {
-  const navigate = useNavigate();
   const location = useLocation();
 
-
-  const handleOrderClick = (orderNumber: number) => {
-    const backgroundLocation = {
-      ...location,
-      state: {
-        backgroundLocationOrder: location,
-        ingredients: ingredients,
-        ordersWss: ordersWss,
-        orderNumber: orderNumber,
-      },
-    };
-    navigate(`/feed/${orderNumber}`, { state: backgroundLocation });
-  };
+  const orderLink = `/feed/${item.number}`;
 
   const visibleIngredients = ingredients.slice(0, 6);
   const hiddenImagesCount = ingredients.length - visibleIngredients.length;
@@ -40,9 +24,10 @@ const FeedItem: FC<IFeedItem> = ({ ingredients, item, ordersWss }) => {
   );
 
   return (
-    <section
+    <Link
+      to={orderLink}
+      state={{ backgroundLocation: location }}
       className={styles.feed_item__container}
-      onClick={() => handleOrderClick(item.number)}
     >
       <div className={styles.feed_item__header}>
         <p className="text text_type_digits-default">#{item.number}</p>
@@ -78,7 +63,7 @@ const FeedItem: FC<IFeedItem> = ({ ingredients, item, ordersWss }) => {
           {totalPrice} <CurrencyIcon type="primary" />
         </p>
       </div>
-    </section>
+    </Link>
   );
 };
 

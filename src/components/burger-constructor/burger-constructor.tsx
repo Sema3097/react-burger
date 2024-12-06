@@ -7,7 +7,6 @@ import {
 import styles from "./burger-construction.module.css";
 import { Modal } from "../uikit/modal";
 import { OrderDetails } from "../uikit/modal-content/order-details";
-import { useSelector } from "react-redux";
 import { useDrop } from "react-dnd";
 import {
   addFilling,
@@ -56,8 +55,8 @@ const BurgerConstructor: FC = () => {
     ...burgerBuns.map((item: Iingredient) => item._id),
   ];
 
-  const user: IUserAuth = useSelector(
-    (state: { user: { user: IUserAuth } }) => state.user.user
+  const user = useAppSelector(
+    (state: { user: { user: IUserAuth | null } }) => state.user.user
   );
 
   const navigate = useNavigate();
