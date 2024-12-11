@@ -13,7 +13,7 @@ import { IngredientDetails } from "../uikit/modal-content/ingredient-details";
 import { DndProvider } from "react-dnd";
 import { HTML5Backend } from "react-dnd-html5-backend";
 import { useGetFetchQuery } from "../../services/fetch-ingredients";
-import { useEffect, useState, FC } from "react";
+import { useEffect, FC } from "react";
 import { getUser, refreshToken } from "../../utils/api";
 import { setUser, setIsAuthChecked } from "../../services/safety/user";
 import { OnlyAuth, OnlyUnAuth } from "../protected/protected-route";
@@ -26,32 +26,40 @@ import { Iingredient } from "../../utils/types";
 const App: FC = () => {
   const { data, error, isSuccess } = useGetFetchQuery(undefined);
   const ingredients: Iingredient[] = data || [];
-  const [ingredientId, setIngredientId] = useState<string | null>(null);
   const dispatch = useAppDispatch();
 
   const location = useLocation();
   const state = location.state as { backgroundLocation?: Location };
 
   useEffect(() => {
-    const fetchUser = async () => {
-      if (localStorage.getItem("accessToken")) {
+    const fetchUserAndInitialize = async () => {
+      const refreshAndSetUser = async () => {
         try {
           const user = await getUser();
           dispatch(setUser(user));
         } catch (err) {
-          if ((err as any)?.message === "jwt expired") {
+          if ((err as Error)?.message === "jwt expired") {
             await refreshToken();
-            await fetchUser();
+            const user = await getUser();
+            dispatch(setUser(user));
+          } else {
+            throw err;
           }
-        } finally {
-          dispatch(setIsAuthChecked(true));
         }
-      } else {
+      };
+  
+      try {
+        if (localStorage.getItem("accessToken")) {
+          await refreshAndSetUser();
+        }
+      } catch (err) {
+        console.error("Ошибка при загрузке пользователя:", err);
+      } finally {
         dispatch(setIsAuthChecked(true));
       }
     };
-
-    fetchUser();
+  
+    fetchUserAndInitialize();
   }, [dispatch]);
 
   if (error) return <h1>{JSON.stringify(error)}</h1>;

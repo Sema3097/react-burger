@@ -1,4 +1,4 @@
-import { AUTHORIZATION } from "../../utils/data";
+import { BASE_URL_API } from "../../utils/data";
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 import { IFetchResponse } from "../../utils/types";
 
@@ -8,7 +8,7 @@ interface ISendDataToServer {
 }
 
 const baseQuery = fetchBaseQuery({
-  baseUrl: AUTHORIZATION,
+  baseUrl: `${BASE_URL_API}auth/login`,
   prepareHeaders: (headers) => {
     const token = localStorage.getItem("accessToken");
     if (token) {
@@ -24,7 +24,7 @@ export const apiAuth = createApi({
   endpoints: (builder) => ({
     auth: builder.mutation<IFetchResponse, ISendDataToServer>({
       query: (credentials) => ({
-        url: AUTHORIZATION,
+        url: `${BASE_URL_API}auth/login`,
         method: "POST",
         body: credentials,
       }),

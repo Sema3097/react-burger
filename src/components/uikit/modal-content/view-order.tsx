@@ -1,18 +1,13 @@
 import React, { FC, useEffect, useState } from "react";
 import styles from "./view-order.module.css";
-import { Iingredient, IOrder } from "../../../utils/types";
+import { Iingredient, IOrder, IResponseWSS } from "../../../utils/types";
 import {
   CurrencyIcon,
   FormattedDate,
 } from "@ya.praktikum/react-developer-burger-ui-components";
 import { useParams } from "react-router-dom";
-import { useAppDispatch, useAppSelector } from "../../../services/hooks/redux";
-import { wsConnect, wsDisconnect } from "../../../services/ws-feed/actions";
-import { ORDER_ADRESS, WSS_API, WSS_API_Profile } from "../../../utils/data";
-import {
-  wsConnectProfile,
-  wsDisconnectProfile,
-} from "../../../services/ws-feed-profile/actions";
+import { useAppSelector } from "../../../services/hooks/redux";
+import { BASE_URL_API } from "../../../utils/data";
 
 interface IViewOrder {
   ingredients: Iingredient[];
@@ -25,33 +20,26 @@ interface IingredientWithCount extends Iingredient {
 }
 
 const ViewOrder: FC<IViewOrder> = ({ ingredients }) => {
-  const [data, setData] = useState<any>(null);
-  const dispatch = useAppDispatch();
+  const [data, setData] = useState<IResponseWSS | null>(null);
 
   useEffect(() => {
-    dispatch(wsConnect(WSS_API));
-    dispatch(wsConnectProfile(WSS_API_Profile));
     if (!order) {
       fetchData();
     }
-    return () => {
-      dispatch(wsDisconnectProfile());
-      dispatch(wsDisconnect());
-    };
-  }, [dispatch]);
+  }, []);
 
   const { number } = useParams();
 
   let order = useAppSelector((state) => {
     if (number) {
-      let order = state.feedOrders?.response?.orders.find(
+      let order = state.feedOrders.response.orders?.find(
         (item) => item.number === +number
       );
       if (order) {
         return order;
       }
 
-      order = state.feedOrdersProfile?.responseProfile?.orders.find(
+      order = state.feedOrdersProfile.responseProfile.orders?.find(
         (item) => item.number === +number
       );
       if (order) {
@@ -62,7 +50,7 @@ const ViewOrder: FC<IViewOrder> = ({ ingredients }) => {
 
   const fetchData = async () => {
     try {
-      const response = await fetch(ORDER_ADRESS + number);
+      const response = await fetch(`${BASE_URL_API}orders/${number}`);
       if (!response.ok) {
         throw new Error("Ошибка при загрузке данных");
       }
@@ -151,7 +139,7 @@ const ViewOrder: FC<IViewOrder> = ({ ingredients }) => {
       {renderStatus(order)}
       <p className="text text_type_main-large">Состав:</p>
       <div className={styles.allIngredients}>
-        {uniqueIngredients.map((item) => (
+        {(uniqueIngredients || []).map((item) => (
           <div key={item._id} className={styles.ViewOrder__ingredients}>
             <div className={styles.mini_container}>
               <img src={item.image} alt={item.name} />
@@ -163,7 +151,7 @@ const ViewOrder: FC<IViewOrder> = ({ ingredients }) => {
           </div>
         ))}
       </div>
-      {order && (
+      {order?.createdAt && (
         <div className={styles.view_order__container_footer}>
           <div className={styles.view_order__footer}>
             <FormattedDate

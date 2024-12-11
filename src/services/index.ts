@@ -19,8 +19,18 @@ import {
 import { socketMiddleware } from "./middleware/socket-middleware";
 import { wsConnect, wsDisconnect } from "./ws-feed/actions";
 import { IResponseWSS } from "../utils/types";
-import { feedOrdersProfileSice, wsCloseProfile, wsConnectingProfile, wsErrorProfile, wsMessageProfile, wsOpenProfile } from "./ws-feed-profile/slice";
-import { wsConnectProfile, wsDisconnectProfile } from "./ws-feed-profile/actions";
+import {
+  feedOrdersProfileSice,
+  wsCloseProfile,
+  wsConnectingProfile,
+  wsErrorProfile,
+  wsMessageProfile,
+  wsOpenProfile,
+} from "./ws-feed-profile/slice";
+import {
+  wsConnectProfile,
+  wsDisconnectProfile,
+} from "./ws-feed-profile/actions";
 
 const WSOrdersMiddleware = socketMiddleware<IResponseWSS, unknown>({
   feedOrders: {
@@ -66,7 +76,7 @@ export const store = configureStore({
       apiRegister.middleware,
       apiAuth.middleware,
       apiLogout.middleware,
-      WSOrdersMiddleware,
+      WSOrdersMiddleware
     ),
 });
 

@@ -1,4 +1,4 @@
-import { API_INGREDIENTS } from "../utils/data";
+import { BASE_URL_API } from "../utils/data";
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 import { Iingredient } from "../utils/types";
 
@@ -9,7 +9,7 @@ interface IUseGetFetchQueryResponse {
 export const fetchApi = createApi({
   reducerPath: "fetch",
   baseQuery: fetchBaseQuery({
-    baseUrl: API_INGREDIENTS,
+    baseUrl: `${BASE_URL_API}ingredients`,
   }),
   endpoints: (builder) => ({
     getFetch: builder.query<Iingredient[], string | undefined>({

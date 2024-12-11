@@ -1,11 +1,11 @@
-import { API_ORDER } from "../utils/data";
+import { BASE_URL_API } from "../utils/data";
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 import { IResponseDataToOrderDetails } from "../utils/types";
 
 export const apiOrder = createApi({
   reducerPath: "apiOrder",
   baseQuery: fetchBaseQuery({
-    baseUrl: API_ORDER,
+    baseUrl: `${BASE_URL_API}orders`,
     prepareHeaders: (headers) => {
       const token = localStorage.getItem("accessToken");
       if (token) {
@@ -20,14 +20,14 @@ export const apiOrder = createApi({
       { ingredients: string[] }
     >({
       query: (data) => ({
-        url: API_ORDER,
+        url: `${BASE_URL_API}orders`,
         method: "POST",
         body: data,
       }),
     }),
     getData: builder.query<IResponseDataToOrderDetails, void>({
       query: () => ({
-        url: API_ORDER,
+        url: `${BASE_URL_API}orders`,
         method: "GET",
       }),
     }),

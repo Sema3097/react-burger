@@ -1,5 +1,4 @@
-import { UPDATE_DATA_USER } from "./data";
-import { UPDATE_TOKEN } from "./data";
+import { BASE_URL_API } from "./data";
 import { IFetchResponse } from "./types";
 
 export const checkResponse = (res: Response): Promise<IFetchResponse> => {
@@ -7,14 +6,18 @@ export const checkResponse = (res: Response): Promise<IFetchResponse> => {
 };
 
 export const refreshToken = async (): Promise<IFetchResponse> => {
-  const response = await fetch(`${UPDATE_TOKEN}`, {
+  const refreshToken = localStorage.getItem("refreshToken");
+
+  if (!refreshToken) {
+    throw new Error("No refresh token available");
+  }
+
+  const response = await fetch(`${BASE_URL_API}auth/token`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json;charset=utf-8",
     },
-    body: JSON.stringify({
-      token: localStorage.getItem("refreshToken"),
-    }),
+    body: JSON.stringify({ token: refreshToken }),
   });
 
   const refreshData = await checkResponse(response);
@@ -80,7 +83,7 @@ export const fetchWithRefresh = async (
 export const getUser = async (): Promise<IFetchResponse> => {
   const token = localStorage.getItem("accessToken");
 
-  const response = await fetch(`${UPDATE_DATA_USER}`, {
+  const response = await fetch(`${BASE_URL_API}auth/user`, {
     method: "GET",
     headers: {
       Authorization: token || "",

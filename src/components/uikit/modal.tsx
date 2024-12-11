@@ -23,6 +23,7 @@ const Modal: FC<IModal> = ({ children, title, closeOrderDetails, loading }) => {
     }
     document.addEventListener("keydown", onEsc);
     return () => document.removeEventListener("keydown", onEsc);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const navigate = useNavigate();

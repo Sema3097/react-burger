@@ -12,8 +12,7 @@ const Feed: FC<IingredientsProps> = ({ ingredients }) => {
   const dispatch = useAppDispatch();
 
   useEffect(() => {
-    dispatch(wsConnect(WSS_API));
-    
+    dispatch(wsConnect(`${WSS_API}/all`));
     return () => {
       dispatch(wsDisconnect());
     };
@@ -21,7 +20,7 @@ const Feed: FC<IingredientsProps> = ({ ingredients }) => {
 
   const responseWss = useAppSelector(getResponse);
 
-  const ordersWss: IOrder[] = responseWss.orders;
+  const ordersWss: IOrder[] = responseWss.orders || [];
 
   const ordersDone = ordersWss.filter((item) => item.status === "done");
   const ordersAtWork = ordersWss.filter(
@@ -29,6 +28,10 @@ const Feed: FC<IingredientsProps> = ({ ingredients }) => {
   );
   const visibleNumbersDone = ordersDone.slice(0, 7);
   const visibleNumbersAtWork = ordersAtWork.slice(0, 7);
+
+  if (!responseWss || !responseWss.orders) {
+    return <p>Загрузка...</p>;
+  }
 
   return (
     <main className={styles.orderFeed_container}>
@@ -42,10 +45,7 @@ const Feed: FC<IingredientsProps> = ({ ingredients }) => {
         </button>
       </div>
       <div className={styles.container_inner}>
-        <Ribbon
-          ordersWss={ordersWss}
-          ingredients={ingredients}
-        />
+        <Ribbon ordersWss={ordersWss} ingredients={ingredients} />
         <section className={styles.info}>
           <div className={styles.orders_numbers}>
             <div>

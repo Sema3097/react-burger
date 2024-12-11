@@ -3,7 +3,6 @@ import { Iingredient, IOrder } from "../../utils/types";
 import styles from "./feed.module.css";
 import { FeedItem } from "./feed-item";
 import { nanoid } from "@reduxjs/toolkit";
-import { Link, useLocation } from "react-router-dom";
 
 interface IRibbon {
   ingredients: Iingredient[];
@@ -11,7 +10,6 @@ interface IRibbon {
 }
 
 const Ribbon: FC<IRibbon> = ({ ingredients, ordersWss }) => {
-  const location = useLocation();
   const feedItemIngredients = ordersWss.map((order) => {
     return order.ingredients
       .map((orderIngredientId) =>

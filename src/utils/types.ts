@@ -72,6 +72,7 @@ export interface IOrder {
   createdAt: string;
   updatedAt: string;
   name: string
+  message?: string;
 }
 
 export interface IResponseWSS {

@@ -1,4 +1,4 @@
-import { LOGOUT } from "../../utils/data";
+import { BASE_URL_API } from "../../utils/data";
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 
 interface ILogoutSend {
@@ -11,7 +11,7 @@ interface ILogoutResponse {
 }
 
 const baseQuery = fetchBaseQuery({
-  baseUrl: LOGOUT,
+  baseUrl: `${BASE_URL_API}auth/logout`,
 });
 
 export const apiLogout = createApi({
@@ -20,7 +20,7 @@ export const apiLogout = createApi({
   endpoints: (builder) => ({
     logout: builder.mutation<ILogoutResponse, ILogoutSend>({
       query: ({ token }) => ({
-        url: LOGOUT,
+        url: `${BASE_URL_API}auth/logout`,
         method: "POST",
         body: {
           token,

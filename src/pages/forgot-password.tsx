@@ -5,7 +5,7 @@ import {
 } from "@ya.praktikum/react-developer-burger-ui-components";
 import styles from "./pages.module.css";
 import { Link, NavigateFunction, useNavigate } from "react-router-dom";
-import { FORGOT_PASSWORD } from "../utils/data";
+import { BASE_URL_API } from "../utils/data";
 
 interface IResponseData {
   success: boolean;
@@ -26,7 +26,7 @@ const ForgotPassword: FC = () => {
     e.preventDefault();
 
     try {
-      const response = await fetch(FORGOT_PASSWORD, {
+      const response = await fetch(`${BASE_URL_API}password-reset`, {
         method: "POST",
         body: JSON.stringify({ email }),
       });

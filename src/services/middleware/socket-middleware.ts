@@ -23,9 +23,9 @@ export const socketMiddleware = <R, S>(
   withTokenRefresh: boolean = false
 ): Middleware<NonNullable<unknown>, RootState> => {
   return (store) => {
-    const sockets: Record<string, WebSocket | null> = {}; 
-    const urls: Record<string, string> = {}; 
-    const isConnected: Record<string, boolean> = {}; 
+    const sockets: Record<string, WebSocket | null> = {};
+    const urls: Record<string, string> = {};
+    const isConnected: Record<string, boolean> = {};
     const reconnectTimers: Record<string, number> = {};
 
     return (next) => (action) => {

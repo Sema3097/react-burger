@@ -6,7 +6,7 @@ import {
 } from "@ya.praktikum/react-developer-burger-ui-components";
 import styles from "./pages.module.css";
 import { Link, useLocation, useNavigate } from "react-router-dom";
-import { RESET_PASSWORD } from "../utils/data";
+import { BASE_URL_API } from "../utils/data";
 
 interface ILocationState {
   fromForgot?: boolean;
@@ -30,7 +30,7 @@ const ResetPassword: FC = () => {
   ): Promise<void> => {
     e.preventDefault();
     try {
-      const response = await fetch(RESET_PASSWORD, {
+      const response = await fetch(`${BASE_URL_API}password-reset/reset`, {
         method: "POST",
         body: JSON.stringify({ password: password, token: token }),
       });

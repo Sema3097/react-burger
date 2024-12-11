@@ -5,7 +5,7 @@ import {
   Input,
   Button,
 } from "@ya.praktikum/react-developer-burger-ui-components";
-import { UPDATE_DATA_USER } from "../../utils/data";
+import { BASE_URL_API } from "../../utils/data";
 import { getUser } from "../../utils/api";
 import { refreshToken } from "../../utils/api";
 import { checkResponse } from "../../utils/api";
@@ -54,7 +54,7 @@ const ChangeDataForm: FC = () => {
   ): Promise<void> => {
     e.preventDefault();
     try {
-      await fetch(UPDATE_DATA_USER, {
+      await fetch(`${BASE_URL_API}auth/user`, {
         method: "PATCH",
         headers: {
           Authorization: token || "",
