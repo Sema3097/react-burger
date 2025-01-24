@@ -23,7 +23,7 @@ const Modal: FC<IModal> = ({ children, title, closeOrderDetails, loading }) => {
     }
     document.addEventListener("keydown", onEsc);
     return () => document.removeEventListener("keydown", onEsc);
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const navigate = useNavigate();
@@ -42,7 +42,7 @@ const Modal: FC<IModal> = ({ children, title, closeOrderDetails, loading }) => {
 
   return createPortal(
     <>
-      <div className={styles.modal}>
+      <div className={styles.modal} data-test="modal">
         <header className={styles.header}>
           <article className="text text_type_main-medium">{title}</article>
           {loading ? null : (
@@ -50,6 +50,7 @@ const Modal: FC<IModal> = ({ children, title, closeOrderDetails, loading }) => {
               onClick={closeModal}
               type="primary"
               className={styles.cross}
+              data-test="closeIcon"
             />
           )}
         </header>

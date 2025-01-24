@@ -6,6 +6,7 @@ import { Middleware } from "redux";
 import { RootState } from "..";
 import { refreshToken } from "../../utils/api";
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 export type WSActions<R, S> = {
   connect: ActionCreatorWithPayload<string>;
   disconnect: ActionCreatorWithoutPayload;

@@ -33,7 +33,7 @@ const Preloader: FC = () => {
   }, [dispatch, token]);
 
   return (
-    <div className={styles.preloader_container}>
+    <div className={styles.preloader_container} data-test='preloader_container'>
       <h1 className="text text_type_main-medium">
         Подождите, ваш заказ выполняется...
       </h1>

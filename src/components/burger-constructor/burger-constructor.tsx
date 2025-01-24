@@ -62,7 +62,7 @@ const BurgerConstructor: FC = () => {
   const navigate = useNavigate();
 
   const openModalWindow = async (): Promise<void> => {
-    if (user) {
+    if (user && burgerBuns.length) {
       setLoading(true);
       setTimeout(async () => {
         try {
@@ -83,7 +83,7 @@ const BurgerConstructor: FC = () => {
           setLoading(false);
         }
       }, 15000);
-    } else {
+    } else if (!user) {
       navigate("/login");
     }
   };
@@ -109,7 +109,11 @@ const BurgerConstructor: FC = () => {
   );
 
   return (
-    <section className={styles.container} ref={dropRef}>
+    <section
+      className={styles.container}
+      ref={dropRef}
+      data-testid="burger-constructor"
+    >
       <div className={styles.constructor_container}>
         <div>
           {burgerBuns.length === 0 ? (

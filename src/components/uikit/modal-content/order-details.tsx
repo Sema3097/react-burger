@@ -12,7 +12,7 @@ const OrderDetails: FC<IOrderDetails> = ({ responseData }) => {
     return <h1>Нет данных</h1>;
   }
   return (
-    <div className={styles.OrderDetails_container}>
+    <div className={styles.OrderDetails_container} data-test='OrderDetails_container'>
       <h1
         className={`${styles.OrderDetails_number} text text_type_digits-large`}
       >

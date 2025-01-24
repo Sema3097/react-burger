@@ -1,9 +1,6 @@
 import React, { FC } from "react";
 import styles from "./item-ingredient.module.css";
-import {
-  CurrencyIcon,
-  Counter,
-} from "@ya.praktikum/react-developer-burger-ui-components";
+import { CurrencyIcon, Counter } from "@ya.praktikum/react-developer-burger-ui-components";
 import { useDrag } from "react-dnd";
 import { Iingredient } from "../../utils/types";
 import { useAppSelector } from "../../services/hooks/redux";
@@ -31,24 +28,30 @@ const BurgerItem: FC<IBurgerItem> = ({ data }) => {
     }
   };
 
-  const [, drugRef] = useDrag({
+  const [, dragRef] = useDrag({
     type: "filling",
     item: data,
   });
 
   return (
-    <div ref={drugRef} className={styles.main_item_card}>
-      <Counter
-        count={getIngredientCount(data)}
-        size="default"
-        extraClass="m-1"
-      />
+    <div
+      ref={dragRef}
+      className={styles.main_item_card}
+      data-testid={`burger-item-${data._id}`}
+    >
+      <div data-counter={data._id}>
+        <Counter
+          count={getIngredientCount(data)}
+          size="default"
+          extraClass="m-1"
+        />
+      </div>
       <img src={data.image} alt="logo" />
       <div className={styles.main_info}>
         <span className="text text_type_digits-default">{data.price}</span>
         <CurrencyIcon type="primary" />
       </div>
-      <article className={`${styles.name} text text_type_main-default`}>
+      <article className={`${styles.name} text text_type_main-default}`}>
         {data.name}
       </article>
     </div>

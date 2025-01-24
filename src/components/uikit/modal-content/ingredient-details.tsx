@@ -17,7 +17,7 @@ const IngredientDetails: FC<IIngredientDetails> = ({ ingredients }) => {
 
   return (
     <>
-      <div className={styles.IngredientDetails_container}>
+      <div className={styles.IngredientDetails_container} data-test='ingredient-details'>
         <img
           className={styles.IngredientDetails_img}
           src={ingredient.image}

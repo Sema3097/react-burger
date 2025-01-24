@@ -6,7 +6,13 @@ interface IModalOverlay {
 }
 
 const ModalOverlay: FC<IModalOverlay> = ({ closeModal }) => {
-  return <div className={styles.modal_overlay} onClick={closeModal} />;
+  return (
+    <div
+      className={styles.modal_overlay}
+      data-test="modal-overlay"
+      onClick={closeModal}
+    />
+  );
 };
 
 export { ModalOverlay };
