@@ -6,7 +6,7 @@ interface IConstructorState {
   burgerBuns: Iingredient[];
 }
 
-const initialState: IConstructorState = {
+export const initialState: IConstructorState = {
   burgerFilling: [],
   burgerBuns: [],
 };

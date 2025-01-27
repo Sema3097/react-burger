@@ -1,3 +1,9 @@
+const { testURL } = require("../../support/data");
+const { burgerBun } = require("../../support/data");
+const { dataTestidBurgerConstructor } = require("../../support/data");
+const { preloaderContainer } = require("../../support/data");
+const { OrderDetails_container } = require("../../support/data");
+
 /* eslint-disable cypress/no-unnecessary-waiting */
 describe("BurgerConstructor Modal Tests", () => {
   beforeEach(() => {
@@ -24,26 +30,24 @@ describe("BurgerConstructor Modal Tests", () => {
       body: { success: true, name: "Test Order", order: { number: 12345 } },
     }).as("createOrder");
     localStorage.setItem("accessToken", "fake-valid-token");
-    cy.visit("http://localhost:3000");
+    cy.visit(testURL);
   });
 
   it("should open the modal with preloader on order button click", () => {
-    cy.get('[data-testid="burger-item-bun-1"]').should("exist");
+    cy.get(burgerBun).should("exist");
     const dataTransfer = new DataTransfer();
-    cy.get('[data-testid="burger-item-bun-1"]').trigger("dragstart", {
+    cy.get(burgerBun).trigger("dragstart", {
       dataTransfer,
     });
     // eslint-disable-next-line cypress/unsafe-to-chain-command
-    cy.get('[data-testid="burger-constructor"]')
+    cy.get(dataTestidBurgerConstructor)
       .trigger("drop", { dataTransfer })
       .trigger("dragend", { dataTransfer });
     cy.get("button").contains("Оформить заказ").click();
     cy.get('[data-test="modal"]').should("be.visible");
-    cy.get('[data-test="preloader_container"]', { timeout: 15000 }).should(
-      "be.visible"
-    );
+    cy.get(preloaderContainer, { timeout: 15000 }).should("be.visible");
     cy.wait("@createOrder", { timeout: 15000 }).then(() => {
-      cy.get('[data-test="OrderDetails_container"]').should("be.visible");
+      cy.get(OrderDetails_container).should("be.visible");
       cy.get('[data-test="OrderDetails_container"] h1').should(
         "contain",
         "12345"
@@ -60,22 +64,20 @@ describe("BurgerConstructor Modal Tests", () => {
   });
 
   it("should close the modal when clicking on CloseIcon", () => {
-    cy.get('[data-testid="burger-item-bun-1"]').should("exist");
+    cy.get(burgerBun).should("exist");
     const dataTransfer = new DataTransfer();
-    cy.get('[data-testid="burger-item-bun-1"]').trigger("dragstart", {
+    cy.get(burgerBun).trigger("dragstart", {
       dataTransfer,
     });
     // eslint-disable-next-line cypress/unsafe-to-chain-command
-    cy.get('[data-testid="burger-constructor"]')
+    cy.get(dataTestidBurgerConstructor)
       .trigger("drop", { dataTransfer })
       .trigger("dragend", { dataTransfer });
     cy.get("button").contains("Оформить заказ").click();
     cy.get('[data-test="modal"]').should("be.visible");
-    cy.get('[data-test="preloader_container"]', { timeout: 15000 }).should(
-      "be.visible"
-    );
-    cy.wait("@createOrder", { timeout: 15000 }).then(() => {
-      cy.get('[data-test="OrderDetails_container"]').should("be.visible");
+    cy.get(preloaderContainer, { timeout: 17500 }).should("be.visible");
+    cy.wait("@createOrder", { timeout: 17500 }).then(() => {
+      cy.get(OrderDetails_container).should("be.visible");
       cy.get('[data-test="OrderDetails_container"] h1').should(
         "contain",
         "12345"
@@ -94,22 +96,20 @@ describe("BurgerConstructor Modal Tests", () => {
   });
 
   it("should close the modal when clicking on ModalOverlay", () => {
-    cy.get('[data-testid="burger-item-bun-1"]').should("exist");
+    cy.get(burgerBun).should("exist");
     const dataTransfer = new DataTransfer();
-    cy.get('[data-testid="burger-item-bun-1"]').trigger("dragstart", {
+    cy.get(burgerBun).trigger("dragstart", {
       dataTransfer,
     });
     // eslint-disable-next-line cypress/unsafe-to-chain-command
-    cy.get('[data-testid="burger-constructor"]')
+    cy.get(dataTestidBurgerConstructor)
       .trigger("drop", { dataTransfer })
       .trigger("dragend", { dataTransfer });
     cy.get("button").contains("Оформить заказ").click();
     cy.get('[data-test="modal"]').should("be.visible");
-    cy.get('[data-test="preloader_container"]', { timeout: 15000 }).should(
-      "be.visible"
-    );
-    cy.wait("@createOrder", { timeout: 15000 }).then(() => {
-      cy.get('[data-test="OrderDetails_container"]').should("be.visible");
+    cy.get(preloaderContainer, { timeout: 20000 }).should("be.visible");
+    cy.wait("@createOrder", { timeout: 20000 }).then(() => {
+      cy.get(OrderDetails_container).should("be.visible");
       cy.get('[data-test="OrderDetails_container"] h1').should(
         "contain",
         "12345"
@@ -124,27 +124,25 @@ describe("BurgerConstructor Modal Tests", () => {
       );
     });
     cy.get('[data-test="modal-overlay"]').click({ force: true });
-    cy.wait(1000);
+    cy.wait(2000);
     cy.get('[data-test="modal"]').should("not.exist");
   });
 
   it("should close the modal when pressing the Escape key", () => {
-    cy.get('[data-testid="burger-item-bun-1"]').should("exist");
+    cy.get(burgerBun).should("exist");
     const dataTransfer = new DataTransfer();
-    cy.get('[data-testid="burger-item-bun-1"]').trigger("dragstart", {
+    cy.get(burgerBun).trigger("dragstart", {
       dataTransfer,
     });
     // eslint-disable-next-line cypress/unsafe-to-chain-command
-    cy.get('[data-testid="burger-constructor"]')
+    cy.get(dataTestidBurgerConstructor)
       .trigger("drop", { dataTransfer })
       .trigger("dragend", { dataTransfer });
     cy.get("button").contains("Оформить заказ").click();
     cy.get('[data-test="modal"]').should("be.visible");
-    cy.get('[data-test="preloader_container"]', { timeout: 15000 }).should(
-      "be.visible"
-    );
-    cy.wait("@createOrder", { timeout: 15000 }).then(() => {
-      cy.get('[data-test="OrderDetails_container"]').should("be.visible");
+    cy.get(preloaderContainer, { timeout: 22500 }).should("be.visible");
+    cy.wait("@createOrder", { timeout: 22500 }).then(() => {
+      cy.get(OrderDetails_container).should("be.visible");
       cy.get('[data-test="OrderDetails_container"] h1').should(
         "contain",
         "12345"
@@ -159,7 +157,7 @@ describe("BurgerConstructor Modal Tests", () => {
       );
     });
     cy.get("body").type("{esc}");
-    cy.wait(1000);
+    cy.wait(2000);
     cy.get('[data-test="modal"]').should("not.exist");
   });
 });

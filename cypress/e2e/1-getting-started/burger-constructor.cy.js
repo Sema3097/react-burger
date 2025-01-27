@@ -1,9 +1,11 @@
+const { testURL } = require("../../support/data");
+
 /* eslint-disable cypress/unsafe-to-chain-command */
 describe("Burger Constructor Drag-and-Drop", () => {
   beforeEach(() => {
     cy.intercept("GET", "**/api/ingredients").as("getIngredients");
 
-    cy.visit("http://localhost:3000");
+    cy.visit(testURL);
 
     cy.wait("@getIngredients");
 

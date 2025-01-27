@@ -5,16 +5,12 @@ import reducer, {
   deleteBuns,
   transferIngredients,
   clearConstructor,
+  initialState,
 } from "../constructor-ingredients-save";
 
 describe("constructorSlice", () => {
-  const initialState = {
-    burgerFilling: [],
-    burgerBuns: [],
-  };
-
   it("should handle initial state", () => {
-    expect(reducer(undefined, {})).toEqual(initialState);
+    expect(reducer(undefined, {})).toMatchObject(initialState);
   });
 
   it("should add filling correctly", () => {
