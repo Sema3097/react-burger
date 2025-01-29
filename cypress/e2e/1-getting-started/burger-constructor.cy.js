@@ -1,6 +1,8 @@
+/* eslint-disable cypress/no-unnecessary-waiting */
+/* eslint-disable cypress/unsafe-to-chain-command */
+
 const { testURL } = require("../../support/data");
 
-/* eslint-disable cypress/unsafe-to-chain-command */
 describe("Burger Constructor Drag-and-Drop", () => {
   beforeEach(() => {
     cy.intercept("GET", "**/api/ingredients").as("getIngredients");
@@ -26,10 +28,10 @@ describe("Burger Constructor Drag-and-Drop", () => {
 
     cy.get('[data-testid="burger-constructor"]').as("constructor");
 
-    cy.get("@bun")
-      .trigger("dragstart", { force: true })
-      .get("@constructor")
-      .trigger("drop", { force: true });
+    cy.get("@bun").trigger("dragstart", { force: true });
+    cy.wait(500);
+    cy.get("@constructor").trigger("drop", { force: true });
+    cy.wait(500);
 
     cy.get("@bun")
       .find("[data-counter]")
@@ -38,10 +40,10 @@ describe("Burger Constructor Drag-and-Drop", () => {
         expect(text.trim()).to.equal("2");
       });
 
-    cy.get("@bun")
-      .trigger("dragstart", { force: true })
-      .get("@constructor")
-      .trigger("drop", { force: true });
+    cy.get("@bun").trigger("dragstart", { force: true });
+    cy.wait(500);
+    cy.get("@constructor").trigger("drop", { force: true });
+    cy.wait(500);
 
     cy.get("@bun")
       .find("[data-counter]")
@@ -68,10 +70,10 @@ describe("Burger Constructor Drag-and-Drop", () => {
 
     cy.get('[data-testid="burger-constructor"]').as("constructor");
 
-    cy.get("@ingredient")
-      .trigger("dragstart", { force: true })
-      .get("@constructor")
-      .trigger("drop", { force: true });
+    cy.get("@ingredient").trigger("dragstart", { force: true });
+    cy.wait(500);
+    cy.get("@constructor").trigger("drop", { force: true });
+    cy.wait(500);
 
     cy.get("@ingredient")
       .find("[data-counter]")
@@ -80,10 +82,10 @@ describe("Burger Constructor Drag-and-Drop", () => {
         expect(text.trim()).to.equal("1");
       });
 
-    cy.get("@ingredient")
-      .trigger("dragstart", { force: true })
-      .get("@constructor")
-      .trigger("drop", { force: true });
+    cy.get("@ingredient").trigger("dragstart", { force: true });
+    cy.wait(500);
+    cy.get("@constructor").trigger("drop", { force: true });
+    cy.wait(500);
 
     cy.get("@ingredient")
       .find("[data-counter]")
@@ -103,10 +105,12 @@ describe("Burger Constructor Drag-and-Drop", () => {
         expect(text.trim()).to.equal("0");
       });
 
-    cy.get("@bun")
-      .trigger("dragstart", { force: true })
-      .get('[data-testid="burger-constructor"]')
-      .trigger("drop", { force: true });
+    cy.get("@bun").trigger("dragstart", { force: true });
+    cy.wait(500);
+    cy.get('[data-testid="burger-constructor"]').trigger("drop", {
+      force: true,
+    });
+    cy.wait(500);
 
     cy.get("@bun")
       .find("[data-counter]")
@@ -115,10 +119,12 @@ describe("Burger Constructor Drag-and-Drop", () => {
         expect(text.trim()).to.equal("2");
       });
 
-    cy.get("@bun")
-      .trigger("dragstart", { force: true })
-      .get('[data-testid="burger-constructor"]')
-      .trigger("drop", { force: true });
+    cy.get("@bun").trigger("dragstart", { force: true });
+    cy.wait(500);
+    cy.get('[data-testid="burger-constructor"]').trigger("drop", {
+      force: true,
+    });
+    cy.wait(500);
 
     cy.get("@bun")
       .find("[data-counter]")
@@ -139,10 +145,12 @@ describe("Burger Constructor Drag-and-Drop", () => {
         expect(text.trim()).to.equal("0");
       });
 
-    cy.get("@ingredient")
-      .trigger("dragstart", { force: true })
-      .get('[data-testid="burger-constructor"]')
-      .trigger("drop", { force: true });
+    cy.get("@ingredient").trigger("dragstart", { force: true });
+    cy.wait(500);
+    cy.get('[data-testid="burger-constructor"]').trigger("drop", {
+      force: true,
+    });
+    cy.wait(500);
 
     cy.get("@ingredient")
       .find("[data-counter]")
@@ -151,10 +159,12 @@ describe("Burger Constructor Drag-and-Drop", () => {
         expect(text.trim()).to.equal("1");
       });
 
-    cy.get("@ingredient")
-      .trigger("dragstart", { force: true })
-      .get('[data-testid="burger-constructor"]')
-      .trigger("drop", { force: true });
+    cy.get("@ingredient").trigger("dragstart", { force: true });
+    cy.wait(500);
+    cy.get('[data-testid="burger-constructor"]').trigger("drop", {
+      force: true,
+    });
+    cy.wait(500);
 
     cy.get("@ingredient")
       .find("[data-counter]")
@@ -166,10 +176,12 @@ describe("Burger Constructor Drag-and-Drop", () => {
 
   it("should correctly add buns and other ingredients in respective blocks", () => {
     cy.get('[data-testid^="burger-item-"]').first().as("bun");
-    cy.get("@bun")
-      .trigger("dragstart", { force: true })
-      .get('[data-testid="burger-constructor"]')
-      .trigger("drop", { force: true });
+    cy.get("@bun").trigger("dragstart", { force: true });
+    cy.wait(500);
+    cy.get('[data-testid="burger-constructor"]').trigger("drop", {
+      force: true,
+    });
+    cy.wait(500);
 
     cy.get('[data-testid="burger-constructor"]')
       .find(".constructor-element")
@@ -180,10 +192,12 @@ describe("Burger Constructor Drag-and-Drop", () => {
       .not(":first")
       .last()
       .as("ingredient");
-    cy.get("@ingredient")
-      .trigger("dragstart", { force: true })
-      .get('[data-testid="burger-constructor"]')
-      .trigger("drop", { force: true });
+    cy.get("@ingredient").trigger("dragstart", { force: true });
+    cy.wait(500);
+    cy.get('[data-testid="burger-constructor"]').trigger("drop", {
+      force: true,
+    });
+    cy.wait(500);
 
     cy.get('[data-testid="burger-constructor"]')
       .find(".constructor-element")
